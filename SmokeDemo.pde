@@ -1,39 +1,69 @@
 ParticleSystem ps;
 
+PImage img;
+
+int N = 100; // dimension of grid
+int size = (N+2)*(N+2);
+double h; // size of each voxel
+double u[] = new double[size];
+double v[] = new double[size];
+double u_prev[] = new double[size];
+double v_prev[] = new double[size];
+double dens[] = new double[size];
+double dens_prev[] = new double[size];
+
+int IX(int i, int j){
+  return ((i)+(N+2)*j);
+}
+
+/* This method draws a smoke image in the 
+* box specified at (i,j) in the NxN grid
+*/
+void drawSmokeAt(PImage image, int i, int j){
+  image(image, (float)h*i, (float)h*j);
+}
+
 void setup() {
-  size(640, 360, P3D);
-  PImage img = loadImage("smokealpha.png");
+  size(640, 640, P3D);
+  img = loadImage("smokealpha.png");
   img.resize(25, 0);
-  ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
+  //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
+
+  h = (double)width / (double)N;
+
 }
 
 void draw() {
   background(0);
   
-  // 3D camera
-  //camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
+  drawSmokeAt(img, 10, 5);
+  drawSmokeAt(img, 30, 6);
+  drawSmokeAt(img, 50, 50);
+  drawSmokeAt(img, 51, 50);
+  //// 3D camera
+  ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
 
-  // Calculate a "wind" force based on mouse horizontal position
-  float dx = map(mouseX, 0, width, -0.2, 0.2);
-  PVector wind = new PVector(dx, 0);
-  PVector test = new PVector(0, 0.01);
-  ps.applyForce(wind);
-  ps.applyForce(test);
-  ps.run();
-  for (int i = 0; i < 2; i++) {
-    ps.addParticle();
-  }
+  //// Calculate a "wind" force based on mouse horizontal position
+  //float dx = map(mouseX, 0, width, -0.2, 0.2);
+  //PVector wind = new PVector(dx, 0);
+  //PVector test = new PVector(0, 0.01);
+  //ps.applyForce(wind);
+  //ps.applyForce(test);
+  //ps.run();
+  //for (int i = 0; i < 2; i++) {
+  //  ps.addParticle();
+  //}
 
-  // Draw an arrow representing the wind force
-  drawVector(wind, new PVector(width/2, 50, 0), 500);
+  //// Draw an arrow representing the wind force
+  //drawVector(wind, new PVector(width/2, 50, 0), 500);
   
-  // 3D box
-  //pushMatrix();
-  //translate(width/2, height/2, -100);
-  //stroke(255);
-  //noFill();
-  //box(200);
-  //popMatrix();
+  //// 3D box
+  ////pushMatrix();
+  ////translate(width/2, height/2, -100);
+  ////stroke(255);
+  ////noFill();
+  ////box(200);
+  ////popMatrix();
 }
 
 // Renders a vector object 'v' as an arrow and a position 'loc'
