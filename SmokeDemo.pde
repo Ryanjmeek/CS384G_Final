@@ -33,6 +33,32 @@ void add_source(int n, double[] x, double[] s, double dt){
   }
 }
 
+void set_bnd(int n, int b, double[] x){
+  for (int i = 1; i <= N; i++){
+    if (b == 1){
+      x[IX(0,i)] = -x[IX(1,i)];
+      x[IX(n+1,i)] = -x[IX(n,i)];
+    }
+    else {
+      x[IX(0,i)] = x[IX(1,i)];
+      x[IX(n+1,i)] = x[IX(n,i)];
+    }
+    
+    if (b == 2){
+      x[IX(i,0)] = -x[IX(i,1)];
+      x[IX(i,n+1)] = -x[IX(i,n)];
+    }
+    else {
+      x[IX(i,0)] = x[IX(i,1)];
+      x[IX(i,n+1)] = x[IX(i,n)];   
+    }
+  }
+  x[IX(0,0 )] = 0.5*(x[IX(1,0)]+x[IX(0,1)]);
+  x[IX(0,n+1)] = 0.5*(x[IX(1,n+1)]+x[IX(0,n)]);
+  x[IX(n+1,0)] = 0.5*(x[IX(n,0 )]+x[IX(n+1,1)]);
+  x[IX(n+1,n+1)] = 0.5*(x[IX(n,n+1)]+x[IX(n+1,n)]);
+}
+
 void diffuse(int n, int b, double[] x, double[] x0, double diff, double dt){
   double a = dt*diff*n*n;
   
@@ -42,14 +68,40 @@ void diffuse(int n, int b, double[] x, double[] x0, double diff, double dt){
         x[IX(i,j)] = (x0[IX(i,j)] + a*(x[IX(i-1,j)] + x[IX(i+1,j)] + x[IX(i,j-1)] + x[IX(i,j+1)]))/(1+4*a);
       }
     }
-    //set_bnd(n, b, x); // TODO
+    set_bnd(n, b, x); 
   }
+}
+
+void advect(int n, int b, double[] d, double[] d0, double[] u, double[] v, double dt){
+  int i0;
+  int j0;
+  int i1;
+  int j1;
+  double x;
+  double y;
+  double s0;
+  double t0;
+  double s1;
+  double t1;
+  
+  double dt0 = dt*n;
+  for (int i = 1; i <= n; i++){
+    for (int j = 1; j <= n; j++){
+      x = i-dt0*u[IX(i,j)]; y = j-dt0*v[IX(i,j)];
+      if (x<0.5) x=0.5; if (x>n+0.5) x=n+0.5; i0=(int)x; i1=i0+1;
+      if (y<0.5) y=0.5; if (y>n+0.5) y=n+0.5; j0=(int)y; j1=j0+1;
+      s1 = x-i0; s0 = 1-s1; t1 = y-j0; t0 = 1-t1;
+      d[IX(i,j)] = s0*(t0*d0[IX(i0,j0)]+t1*d0[IX(i0,j1)])+
+       s1*(t0*d0[IX(i1,j0)]+t1*d0[IX(i1,j1)]);
+    }
+  }
+  set_bnd(n, b, d);
 }
 
 void dens_step(int n, double[] x, double[] x0, double[] u, double[] v, double diff, double dt){
   add_source(n, x, x0, dt);
   diffuse(n, 0, x0, x, diff, dt);
-  //advect(n, 0, x, x0, u, v, dt);
+  advect(n, 0, x, x0, u, v, dt);
 }
 
 void setup() {
