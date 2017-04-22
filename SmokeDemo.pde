@@ -4,6 +4,7 @@ PImage img;
 
 int N = 100; // dimension of grid
 double diff = 2.0; // diffusion rate
+double visc = 2.0; // viscosity
 int size = (N+2)*(N+2);
 double h; // size of each voxel
 double u[] = new double[size];
@@ -98,10 +99,51 @@ void advect(int n, int b, double[] d, double[] d0, double[] u, double[] v, doubl
   set_bnd(n, b, d);
 }
 
+void project(int n, double[] u, double[] v, double[] p, double[] div){
+  for (int i=1; i<=n; i++) {
+    for (int j=1; j<=n ; j++) {
+      div[IX(i,j)] = -0.5*h*(u[IX(i+1,j)]-u[IX(i-1,j)]+
+      v[IX(i,j+1)]-v[IX(i,j-1)]);
+      p[IX(i,j)] = 0;
+    }
+  }
+  set_bnd (n, 0, div); set_bnd (n, 0, p);
+  for (int k=0; k<20; k++) {
+    for (int i=1; i<=n; i++) {
+      for (int j=1; j<=n; j++) {
+        p[IX(i,j)] = (div[IX(i,j)]+p[IX(i-1,j)]+p[IX(i+1,j)]+
+         p[IX(i,j-1)]+p[IX(i,j+1)])/4;
+      }
+    }
+  set_bnd (n, 0, p);
+  }
+  for (int i=1; i<=n; i++) {
+    for (int j=1; j<=n; j++) {
+      u[IX(i,j)] -= 0.5*(p[IX(i+1,j)]-p[IX(i-1,j)])/h;
+      v[IX(i,j)] -= 0.5*(p[IX(i,j+1)]-p[IX(i,j-1)])/h;
+    }
+  }
+  set_bnd (n, 1, u); set_bnd (n, 2, v);
+}
+
 void dens_step(int n, double[] x, double[] x0, double[] u, double[] v, double diff, double dt){
   add_source(n, x, x0, dt);
   diffuse(n, 0, x0, x, diff, dt);
   advect(n, 0, x, x0, u, v, dt);
+}
+
+void vel_step(int n, double[] u, double[] v, double[] u0, double[] v0, double visc, double dt){
+  add_source(n, u, u0, dt);
+  add_source(n, v, v0, dt);
+  
+  diffuse(n, 1, u0, u, visc, dt);
+  diffuse(n, 2, v0, v, visc, dt);
+  
+  project(n, u0, v0, u, v);
+  
+  advect(n, 1, u, u0, u0, v0, dt);
+  advect(n, 2, v, v0, u0, v0, dt);
+  project(n, u, v, u0, v0);
 }
 
 void setup() {
@@ -124,6 +166,7 @@ void draw() {
   drawSmokeAt(img, 50, 50);
   drawSmokeAt(img, 51, 50);
 
+  vel_step(N, u, v, u_prev, v_prev, visc, delta);
   dens_step(N, dens, dens_prev, u, v, diff, delta);
   
   lastTime = millis();
