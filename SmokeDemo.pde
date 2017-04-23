@@ -2,9 +2,9 @@ ParticleSystem ps;
 
 PImage img;
 
-int N = 100; // dimension of grid
+int N = 200; // dimension of grid
 double diff = 2.0; // diffusion rate
-double visc = 2.0; // viscosity
+double visc = 20000.0; // viscosity
 int size = (N+2)*(N+2);
 double h; // size of each voxel
 double u[] = new double[size];
@@ -24,13 +24,14 @@ int IX(int i, int j){
 /* This method draws a smoke image in the 
 * box specified at (i,j) in the NxN grid
 */
-void drawSmokeAt(PImage image, int i, int j){
+void drawSmokeAt(PImage image, int i, int j, double density){
+  tint(255, (float)density);
   image(image, (float)h*i, (float)h*j);
 }
 
 void add_source(int n, double[] x, double[] s, double dt){
   for (int i = 0; i < size; i++){
-    if (i == 50){ x[i] += dt*1.0; } // temporarily insert source @50, always
+    if (i == 2500){ x[i] += dt*1.0;} // temporarily insert source @50, always
   }
 }
 
@@ -128,19 +129,43 @@ void project(int n, double[] u, double[] v, double[] p, double[] div){
 
 void dens_step(int n, double[] x, double[] x0, double[] u, double[] v, double diff, double dt){
   add_source(n, x, x0, dt);
-  diffuse(n, 0, x0, x, diff, dt);
+  for (int i=1; i<=N; i++) {
+    for (int j=1; j<=N; j++) {
+      x0[IX(i,j)] = x[IX(i,j)];
+    }
+  }
+  diffuse(n, 0, x, x0, diff, dt);
+  for (int i=1; i<=N; i++) {
+    for (int j=1; j<=N; j++) {
+      x0[IX(i,j)] = x[IX(i,j)];
+    }
+  }
   advect(n, 0, x, x0, u, v, dt);
 }
 
 void vel_step(int n, double[] u, double[] v, double[] u0, double[] v0, double visc, double dt){
   add_source(n, u, u0, dt);
   add_source(n, v, v0, dt);
-  
-  diffuse(n, 1, u0, u, visc, dt);
-  diffuse(n, 2, v0, v, visc, dt);
-  
-  project(n, u0, v0, u, v);
-  
+  for (int i=1; i<=N; i++) {
+    for (int j=1; j<=N; j++) {
+      u0[IX(i,j)] = u[IX(i,j)];
+    }
+  }
+  diffuse(n, 1, u, u0, visc, dt);
+  for (int i=1; i<=N; i++) {
+    for (int j=1; j<=N; j++) {
+      v0[IX(i,j)] = v[IX(i,j)];
+    }
+  }
+  diffuse(n, 2, v, v0, visc, dt);
+ 
+  project(n, u, v, u0, v0);
+  for (int i=1; i<=N; i++) {
+    for (int j=1; j<=N; j++) {
+      u0[IX(i,j)] = u[IX(i,j)];
+      v0[IX(i,j)] = v[IX(i,j)];
+    }
+  }
   advect(n, 1, u, u0, u0, v0, dt);
   advect(n, 2, v, v0, u0, v0, dt);
   project(n, u, v, u0, v0);
@@ -149,11 +174,18 @@ void vel_step(int n, double[] u, double[] v, double[] u0, double[] v0, double vi
 void setup() {
   size(640, 640, P3D);
   img = loadImage("smokealpha.png");
-  img.resize(25, 0);
+  img.resize(18, 0);
   //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
 
   h = (double)width / (double)N;
-
+  
+  for (int i=1; i<=N; i++) {
+    for (int j=1; j<=N; j++) {
+      u_prev[IX(i,j)] = 1.0;
+      v_prev[IX(i,j)] = 1.0;
+    }
+  }
+  
 }
 
 void draw() {
@@ -161,13 +193,24 @@ void draw() {
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
   delta = millis() - lastTime;
-  drawSmokeAt(img, 10, 5);
-  drawSmokeAt(img, 30, 6);
-  drawSmokeAt(img, 50, 50);
-  drawSmokeAt(img, 51, 50);
+  //drawSmokeAt(img, 10, 5);
+  //drawSmokeAt(img, 30, 6);
+  //drawSmokeAt(img, 50, 50);
+  //drawSmokeAt(img, 51, 50);
 
   vel_step(N, u, v, u_prev, v_prev, visc, delta);
+  //println("u_prev[50]: " + u_prev[50] + ", v_prev[50]: " + v_prev[50] + " u[50]: " + u[50] + " v[50]: " + v[50]);
   dens_step(N, dens, dens_prev, u, v, diff, delta);
+  println("dens_prev[67]: " + dens_prev[67] + ", dens[67]: " + dens[67]);
+  
+  for (int i=1; i<=N; i++) {
+    for (int j=1; j<=N; j++) {
+      drawSmokeAt(img, i, j, 255*dens[IX(i,j)]);
+      dens_prev[IX(i,j)] = dens[IX(i,j)];
+      u_prev[IX(i,j)] = u[IX(i,j)];
+      v_prev[IX(i,j)] = v[IX(i,j)];
+    }
+  }
   
   lastTime = millis();
 }
