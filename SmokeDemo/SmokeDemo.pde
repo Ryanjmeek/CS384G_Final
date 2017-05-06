@@ -1,6 +1,7 @@
 import Jama.*;
 
 ParticleSystem ps;
+Grid grid;
 
 PImage img;
 
@@ -45,6 +46,9 @@ class Grid {
 
 void setup() {
   size(640, 640, P3D);
+  
+  grid = new Grid();
+  
   img = loadImage("smokealpha.png");
   img.resize(18, 0);
   //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
