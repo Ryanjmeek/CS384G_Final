@@ -1,3 +1,5 @@
+import Jama.*;
+
 ParticleSystem ps;
 
 PImage img;
@@ -29,9 +31,15 @@ void drawSmokeAt(PImage image, int i, int j, double density){
   image(image, (float)h*i, (float)h*j);
 }
 
-void add_source(int n, double[] x, double[] s, double dt){
+void add_dens_source(int n, double[] x, double[] s, double dt){
   for (int i = 0; i < size; i++){
-    if (i == 2500){ x[i] += dt*1.0;} // temporarily insert source @50, always
+    if (i == 10000){ x[i] += dt*1.0;} // temporarily insert source @50, always
+  }
+}
+
+void add_vel_source(int n, double[] x, double[] s, double dt){
+  for (int i = 0; i < size; i++){
+    if (i == 10000){ x[i] += dt*1.0;} // temporarily insert source @50, always
   }
 }
 
@@ -128,7 +136,7 @@ void project(int n, double[] u, double[] v, double[] p, double[] div){
 }
 
 void dens_step(int n, double[] x, double[] x0, double[] u, double[] v, double diff, double dt){
-  add_source(n, x, x0, dt);
+  add_dens_source(n, x, x0, dt);
   for (int i=1; i<=N; i++) {
     for (int j=1; j<=N; j++) {
       x0[IX(i,j)] = x[IX(i,j)];
@@ -144,8 +152,8 @@ void dens_step(int n, double[] x, double[] x0, double[] u, double[] v, double di
 }
 
 void vel_step(int n, double[] u, double[] v, double[] u0, double[] v0, double visc, double dt){
-  add_source(n, u, u0, dt);
-  add_source(n, v, v0, dt);
+  add_vel_source(n, u, u0, dt);
+  add_vel_source(n, v, v0, dt);
   for (int i=1; i<=N; i++) {
     for (int j=1; j<=N; j++) {
       u0[IX(i,j)] = u[IX(i,j)];
@@ -193,22 +201,18 @@ void draw() {
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
   delta = millis() - lastTime;
-  //drawSmokeAt(img, 10, 5);
-  //drawSmokeAt(img, 30, 6);
-  //drawSmokeAt(img, 50, 50);
-  //drawSmokeAt(img, 51, 50);
 
   vel_step(N, u, v, u_prev, v_prev, visc, delta);
-  //println("u_prev[50]: " + u_prev[50] + ", v_prev[50]: " + v_prev[50] + " u[50]: " + u[50] + " v[50]: " + v[50]);
+  println("u_prev[50]: " + u_prev[50] + ", v_prev[50]: " + v_prev[50] + " u[50]: " + u[50] + " v[50]: " + v[50]);
   dens_step(N, dens, dens_prev, u, v, diff, delta);
-  println("dens_prev[67]: " + dens_prev[67] + ", dens[67]: " + dens[67]);
+  //println("dens_prev[67]: " + dens_prev[67] + ", dens[67]: " + dens[67]);
   
   for (int i=1; i<=N; i++) {
     for (int j=1; j<=N; j++) {
       drawSmokeAt(img, i, j, 255*dens[IX(i,j)]);
-      dens_prev[IX(i,j)] = dens[IX(i,j)];
-      u_prev[IX(i,j)] = u[IX(i,j)];
-      v_prev[IX(i,j)] = v[IX(i,j)];
+      //dens_prev[IX(i,j)] = dens[IX(i,j)];
+      //u_prev[IX(i,j)] = u[IX(i,j)];
+      //v_prev[IX(i,j)] = v[IX(i,j)];
     }
   }
   
