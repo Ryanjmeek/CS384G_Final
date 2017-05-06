@@ -2,41 +2,64 @@ import Jama.*;
 
 ParticleSystem ps;
 
+PImage img;
+
+int N = 200; // dimension of grid
+double h; // size of each voxel
+double diff = 2.0; // diffusion rate
+double visc = 20000.0; // viscosity
+
+long lastTime = 0;
+long delta = 0;
+
+class Cell {
+  double pressure;
+  PVector velocity;
+  double temperature;
+  double density;
+  
+  Cell(double press, PVector vel, double temp, double dens){
+    this.pressure = press;
+    this.velocity = vel;
+    this.temperature = temp;
+    this.density = dens;
+  }
+  
+}
+
+class Grid {
+  Cell[][] theGrid = new Cell[N][N];
+  
+  Grid(){
+    for (int i = 0; i < N; i++){
+      for (int j = 0; j < N; j++){
+        theGrid[i][j] = new Cell(0.0, new PVector(0.0,0.0), 0.0, 0.0);
+      }
+    }
+  }
+  
+  Cell getCell(int i, int j){
+    return theGrid[i][j];
+  }
+}
 
 void setup() {
-  size(640, 360, P3D);
-  PImage img = loadImage("smokealpha.png");
-  img.resize(25, 0);
-  ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
+  size(640, 640, P3D);
+  img = loadImage("smokealpha.png");
+  img.resize(18, 0);
+  //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
+
+  h = (double)width / (double)N;
+  
 }
 
 void draw() {
   background(0);
+  //// 3D camera
+  ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
+  delta = millis() - lastTime;
   
-  // 3D camera
-  //camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
-
-  // Calculate a "wind" force based on mouse horizontal position
-  float dx = map(mouseX, 0, width, -0.2, 0.2);
-  PVector wind = new PVector(dx, 0);
-  PVector test = new PVector(0, 0.01);
-  ps.applyForce(wind);
-  ps.applyForce(test);
-  ps.run();
-  for (int i = 0; i < 2; i++) {
-    ps.addParticle();
-  }
-
-  // Draw an arrow representing the wind force
-  drawVector(wind, new PVector(width/2, 50, 0), 500);
-  
-  // 3D box
-  //pushMatrix();
-  //translate(width/2, height/2, -100);
-  //stroke(255);
-  //noFill();
-  //box(200);
-  //popMatrix();
+  lastTime = millis();
 }
 
 // Renders a vector object 'v' as an arrow and a position 'loc'
