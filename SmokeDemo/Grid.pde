@@ -19,6 +19,16 @@ class Grid {
   void advect(){
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
+        double x_prev = i - theGrid[i][j].velocity.x*delta;
+        double y_prev = j - theGrid[i][j].velocity.y*delta;
+        
+        if (x_prev < 0) {x_prev = 0;}
+        if (x_prev >= N) {x_prev = N;}
+        if (y_prev < 0) {y_prev = 0;}
+        if (y_prev >= N) {y_prev = N;}
+        
+        
+        
         
       }
     }

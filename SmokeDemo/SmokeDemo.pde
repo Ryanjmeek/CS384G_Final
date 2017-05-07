@@ -11,7 +11,7 @@ double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
 long lastTime = 0;
-long delta = 0;
+double delta = 0.0;
 
 boolean DRAW_VELOCITY_FIELD = true;
 
@@ -32,7 +32,7 @@ void draw() {
   background(0);
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
-  delta = millis() - lastTime;
+  delta = (millis() - lastTime)/1000.0;
   
   if (DRAW_VELOCITY_FIELD){
     for (int i = 0; i < N; i++){
@@ -51,6 +51,7 @@ void draw() {
   grid.advect();
   
   lastTime = millis();
+  //println(delta);
 }
 
 // Renders a vector object 'v' as an arrow and a position 'loc'
