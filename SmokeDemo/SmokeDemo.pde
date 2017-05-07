@@ -5,13 +5,15 @@ Grid grid;
 
 PImage img;
 
-int N = 200; // dimension of grid
+int N = 20; // dimension of grid
 double h; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
 long lastTime = 0;
 long delta = 0;
+
+boolean DRAW_VELOCITY_FIELD = true;
 
 class Cell {
   double pressure;
@@ -34,7 +36,7 @@ class Grid {
   Grid(){
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        theGrid[i][j] = new Cell(0.0, new PVector(0.0,0.0), 0.0, 0.0);
+        theGrid[i][j] = new Cell(0.0, new PVector(random(-100,100),random(-100,100)), 0.0, 0.0);
       }
     }
   }
@@ -62,6 +64,14 @@ void draw() {
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
   delta = millis() - lastTime;
+  
+  if (DRAW_VELOCITY_FIELD){
+    for (int i = 0; i < N; i++){
+      for (int j = 0; j < N; j++){
+        drawVector((new PVector(grid.getCell(i,j).velocity.x, grid.getCell(i,j).velocity.y)).normalize(), new PVector((float)((i+0.5)*h),(float)((j+0.5)*h)), 0.1);
+      }
+    }
+  }
   
   lastTime = millis();
 }
