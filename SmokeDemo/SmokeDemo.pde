@@ -11,7 +11,7 @@ double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
 long lastTime = 0;
-double delta = 0.0;
+float delta = 0.0;
 
 boolean DRAW_VELOCITY_FIELD = true;
 
