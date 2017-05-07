@@ -5,7 +5,7 @@ Grid grid;
 
 PImage img;
 
-int N = 40; // dimension of grid
+int N = 100; // dimension of grid
 double h; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
@@ -13,7 +13,7 @@ double visc = 20000.0; // viscosity
 long lastTime = 0;
 float delta = 0.0;
 
-boolean DRAW_VELOCITY_FIELD = true;
+boolean DRAW_VELOCITY_FIELD = false;
 
 void setup() {
   size(640, 640, P3D);
@@ -32,7 +32,7 @@ void draw() {
   background(0);
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
-  delta = (millis() - lastTime)/1000.0;
+  delta = (millis() - lastTime)/10.0;
   
   if (DRAW_VELOCITY_FIELD){
     for (int i = 0; i < N; i++){
