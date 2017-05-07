@@ -5,7 +5,7 @@ Grid grid;
 
 PImage img;
 
-int N = 20; // dimension of grid
+int N = 40; // dimension of grid
 double h; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
@@ -14,37 +14,6 @@ long lastTime = 0;
 long delta = 0;
 
 boolean DRAW_VELOCITY_FIELD = true;
-
-class Cell {
-  double pressure;
-  PVector velocity;
-  double temperature;
-  double density;
-  
-  Cell(double press, PVector vel, double temp, double dens){
-    this.pressure = press;
-    this.velocity = vel;
-    this.temperature = temp;
-    this.density = dens;
-  }
-  
-}
-
-class Grid {
-  Cell[][] theGrid = new Cell[N][N];
-  
-  Grid(){
-    for (int i = 0; i < N; i++){
-      for (int j = 0; j < N; j++){
-        theGrid[i][j] = new Cell(0.0, new PVector(random(-100,100),random(-100,100)), 0.0, 0.0);
-      }
-    }
-  }
-  
-  Cell getCell(int i, int j){
-    return theGrid[i][j];
-  }
-}
 
 void setup() {
   size(640, 640, P3D);
@@ -68,10 +37,18 @@ void draw() {
   if (DRAW_VELOCITY_FIELD){
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
+        if (grid.getCell(i,j).isASource()){
+          stroke(255, 0, 0);
+        }
+        else {
+          stroke(255, 255, 255);
+        }
         drawVector((new PVector(grid.getCell(i,j).velocity.x, grid.getCell(i,j).velocity.y)).normalize(), new PVector((float)((i+0.5)*h),(float)((j+0.5)*h)), 0.1);
       }
     }
   }
+  
+  grid.advect();
   
   lastTime = millis();
 }
@@ -82,7 +59,7 @@ void drawVector(PVector v, PVector loc, float scayl) {
   float arrowsize = 4;
   // Translate to position to render vector
   translate(loc.x, loc.y);
-  stroke(255);
+  //stroke(255);
   // Call vector heading function to get direction (note that pointing up is a heading of 0) and rotate
   rotate(v.heading());
   // Calculate length of vector & scale it to be bigger or smaller if necessary
