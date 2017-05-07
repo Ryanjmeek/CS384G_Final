@@ -47,11 +47,25 @@ void draw() {
       }
     }
   }
+
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < N; j++) {
+      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density);
+    }
+  }
   
   grid.advect();
   
   lastTime = millis();
   //println(delta);
+}
+
+/* This method draws a smoke image in the 
+* box specified at (i,j) in the NxN grid
+*/
+void drawSmokeAt(PImage image, int i, int j, double density){
+  tint(255, (float)density);
+  image(image, (float)h*i, (float)h*j);
 }
 
 // Renders a vector object 'v' as an arrow and a position 'loc'
