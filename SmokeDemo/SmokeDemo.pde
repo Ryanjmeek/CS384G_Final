@@ -6,7 +6,7 @@ PrintWriter output;
 
 PImage img;
 
-int N = 80; // dimension of grid
+int N = 120; // dimension of grid
 double h; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
@@ -23,7 +23,7 @@ final double alpha = 1;
 final double beta = 1;
 final double epsilon = 1.0e-20;
 
-boolean DRAW_VELOCITY_FIELD = true;
+boolean DRAW_VELOCITY_FIELD = false;
 
 void setup() {
   size(640, 640, P3D);
