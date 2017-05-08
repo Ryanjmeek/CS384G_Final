@@ -115,12 +115,13 @@ class Grid {
         if(right.density < densityTolerance) cright = 0;
         if(top.density < densityTolerance) ctop = 0;
         if(bot.density < densityTolerance) cbot = 0;
-        double cdiv = (cleft + cright + ctop + cbot);
-        coeffs[i][j][0] = cdiv/cdiv;
+        double cdiv = 4;
+        coeffs[i][j][0] = 1/cdiv;
         coeffs[i][j][1] = cleft/cdiv;
         coeffs[i][j][2] = cright/cdiv;
         coeffs[i][j][3] = ctop/cdiv;
         coeffs[i][j][4] = cbot/cdiv;
+        
       }
     }
   }
@@ -143,6 +144,7 @@ class Grid {
                                                                         + coeffs[i][j][3]*pressureTop + coeffs[i][j][4]*pressureBot;
         double diff = (double) abs((float) (pressureNew - pressureOld));
         myCell.pressure = pressureNew;
+        output.println("in doIteration and this is i: " + i + ", j: " + j + ", pressureNew: " + pressureNew);
         if(diff > maxDiff) maxDiff = diff;                        
       }
     }
