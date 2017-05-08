@@ -13,6 +13,10 @@ double visc = 20000.0; // viscosity
 long lastTime = 0;
 float delta = 0.0;
 
+final double ambientTemp = 23;
+final double alpha = 0.000000001;
+final double beta = 0.000000001;
+
 boolean DRAW_VELOCITY_FIELD = false;
 
 void setup() {
@@ -55,6 +59,7 @@ void draw() {
   }
   
   grid.advect();
+  grid.applyBodyForces();
   
   lastTime = millis();
   //println(delta);

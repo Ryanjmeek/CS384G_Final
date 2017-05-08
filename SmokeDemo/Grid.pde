@@ -26,6 +26,21 @@ class Grid {
     }
   }
   
+  void applyBodyForces() {
+    for(int i = 0; i < N; i++) {
+      for(int j = 0; j < N; j++) {
+        this.applyBouyancy(i,j);
+      }
+    }
+  }
+  
+  private void applyBouyancy(int i, int j) {
+    PVector bouyancy = new PVector(0.0, (float)(-alpha * theGrid[i][j].density
+      + beta * (theGrid[i][j].temperature - ambientTemp)));
+    theGrid[i][j].velocity.x += bouyancy.x;
+    theGrid[i][j].velocity.y += bouyancy.y;
+  }
+  
   private void advectDensity(int i, int j){
       if (theGrid[i][j].isASource()){return;}
       float x_prev = i - theGrid[i][j].velocity.x*delta;
