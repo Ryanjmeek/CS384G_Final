@@ -8,7 +8,7 @@ class Grid {
       }
     }
     
-    theGrid[N/2][N/2] = new Cell(0.0, new PVector(0,-1), 23.0, 1.0, true); // source
+    theGrid[N/2][N/2] = new Cell(0.0, new PVector(0,-1), 585.0, 1.0, true); // source, temperature of source is 585 (fire)
     
   }
   
@@ -21,6 +21,7 @@ class Grid {
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
         this.advectDensity(i,j);
+        this.advectTemperature(i,j);
         this.advectVelocity(i,j);
       }
     }
@@ -74,7 +75,7 @@ class Grid {
   }
   
   private void advectDensity(int i, int j){
-      if (theGrid[i][j].isASource()){return;}
+      //if (theGrid[i][j].isASource()){return;}
       float x_prev = i - theGrid[i][j].velocity.x*delta;
       float y_prev = j - theGrid[i][j].velocity.y*delta;
       
@@ -98,8 +99,33 @@ class Grid {
       theGrid[i][j].density = d_mid;
   }
   
+    private void advectTemperature(int i, int j){
+      if (theGrid[i][j].isASource()){return;}
+      float x_prev = i - theGrid[i][j].velocity.x*delta;
+      float y_prev = j - theGrid[i][j].velocity.y*delta;
+      
+      if (x_prev < 0) {x_prev = 0;}
+      if (x_prev >= N-1) {x_prev = N-1;}
+      if (y_prev < 0) {y_prev = 0;}
+      if (y_prev >= N-1) {y_prev = N-1;}
+      
+      //println("x_prev = " + x_prev + ", y_prev = " + y_prev);
+      
+      double t_bl = theGrid[floor(x_prev)][floor(y_prev)].temperature;
+      double t_tl = theGrid[floor(x_prev)][ceil(y_prev)].temperature;
+      double t_br = theGrid[ceil(x_prev)][floor(y_prev)].temperature;
+      double t_tr = theGrid[ceil(x_prev)][ceil(y_prev)].temperature;
+      
+      double t_ml = lerp((float)t_bl, (float)t_tl, (float)((y_prev-floor(y_prev))/h));
+      double t_mr = lerp((float)t_br, (float)t_tr, (float)((y_prev-floor(y_prev))/h));
+      
+      double t_mid = lerp((float)t_ml, (float)t_mr, (float)((x_prev-floor(x_prev))/h));
+      
+      theGrid[i][j].temperature = t_mid;
+  }
+  
   private void advectVelocity(int i, int j){
-        if (theGrid[i][j].isASource()){return;}
+        //if (theGrid[i][j].isASource()){return;}
         float x_prev = i - theGrid[i][j].velocity.x*delta;
         float y_prev = j - theGrid[i][j].velocity.y*delta;
         

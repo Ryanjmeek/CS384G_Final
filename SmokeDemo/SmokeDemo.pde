@@ -5,7 +5,7 @@ Grid grid;
 
 PImage img;
 
-int N = 100; // dimension of grid
+int N = 80; // dimension of grid
 double h; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
@@ -26,7 +26,7 @@ void setup() {
   grid = new Grid();
   
   img = loadImage("smokealpha.png");
-  img.resize(18, 0);
+  img.resize(50, 0);
   //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
 
   h = (double)width / (double)N;
