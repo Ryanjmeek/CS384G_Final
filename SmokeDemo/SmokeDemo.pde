@@ -10,6 +10,10 @@ double h; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
+double smokeWeight = 1;
+double densityTolerance = 0.001;
+double pressureTolerance = 0.001;
+
 long lastTime = 0;
 float delta = 0.0;
 
@@ -56,6 +60,8 @@ void draw() {
   
   grid.advect();
   
+  //apply body forces
+  //grid.project();
   lastTime = millis();
   //println(delta);
 }

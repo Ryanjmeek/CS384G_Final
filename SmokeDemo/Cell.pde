@@ -6,6 +6,7 @@ class Cell {
   
   boolean isSource;
   
+
   Cell(double press, PVector vel, double temp, double dens, boolean isSource){
     this.pressure = press;
     this.velocity = vel;
