@@ -13,9 +13,10 @@ class Grid {
   }
   
   Cell getCell(int i, int j){
-    if(i < 0 || i > N - 1 || j < 0 || i > N - 1){
+    if(i < 0 || i > N - 1 || j < 0 || j > N - 1){
       return new Cell(0, new PVector(0,0,0), 23, 0, false);
     }
+    //println("This is i: " + i + " and j: " + j);
     return theGrid[i][j];
   }
   
@@ -161,7 +162,7 @@ class Grid {
         double pressureBot = j == N - 1 ? myPressure : bot.pressure;
         myCell.velocity.x = myCell.velocity.x - delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
         myCell.velocity.y = myCell.velocity.y - delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
-        
+        println("in updateVelocities and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
       }
     }
     
