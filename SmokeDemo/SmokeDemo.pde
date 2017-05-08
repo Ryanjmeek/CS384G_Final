@@ -14,8 +14,9 @@ long lastTime = 0;
 float delta = 0.0;
 
 final double ambientTemp = 23;
-final double alpha = 0.000000001;
-final double beta = 0.000000001;
+final double alpha = 1;
+final double beta = 1;
+final double epsilon = 1.0e-20;
 
 boolean DRAW_VELOCITY_FIELD = false;
 

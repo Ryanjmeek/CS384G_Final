@@ -3,6 +3,7 @@ class Cell {
   PVector velocity;
   double temperature;
   double density;
+  double omega;
   
   boolean isSource;
   

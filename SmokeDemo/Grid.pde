@@ -29,9 +29,18 @@ class Grid {
   void applyBodyForces() {
     for(int i = 0; i < N; i++) {
       for(int j = 0; j < N; j++) {
-        this.applyBouyancy(i,j);
+        //this.applyGravity(i,j);
+        //this.applyBouyancy(i,j);
+        this.setOmega(i,j);
+        this.applyVorticity(i,j);
       }
     }
+  }
+  
+  private void applyGravity(int i, int j) {
+    PVector gravity = new PVector(0.0, 1);
+    theGrid[i][j].velocity.x += gravity.x;
+    theGrid[i][j].velocity.y += gravity.y;
   }
   
   private void applyBouyancy(int i, int j) {
@@ -39,6 +48,29 @@ class Grid {
       + beta * (theGrid[i][j].temperature - ambientTemp)));
     theGrid[i][j].velocity.x += bouyancy.x;
     theGrid[i][j].velocity.y += bouyancy.y;
+  }
+  
+  private void setOmega(int i, int j) {
+    double vel1 = (i+1 < N) ? theGrid[i+1][j].velocity.y : theGrid[i][j].velocity.y;
+    double vel2 = (i-1 >= 0) ? theGrid[i-1][j].velocity.y : theGrid[i][j].velocity.y;
+    double vel3 = (j+1 < N) ? theGrid[i][j+1].velocity.x : theGrid[i][j].velocity.x;
+    double vel4 = (j-1 >= 0) ? theGrid[i][j-1].velocity.x : theGrid[i][j].velocity.x;
+    double omega = (vel1 - vel2)/(2*h) - (vel3 - vel4)/(2*h);
+    theGrid[i][j].omega = omega;
+  }
+  
+  private void applyVorticity(int i, int j) {
+    double omega1 = (i+1 < N) ? theGrid[i+1][j].omega : theGrid[i][j].omega;
+    double omega2 = (i-1 >= 0) ? theGrid[i-1][j].omega : theGrid[i][j].omega;
+    double omega3 = (j+1 < N) ? theGrid[i][j+1].omega : theGrid[i][j].omega;
+    double omega4 = (j-1 >= 0) ? theGrid[i][j-1].omega : theGrid[i][j].omega;
+    double omegaDivX = (omega1 - omega2)/(2*h);
+    double omegaDivY = (omega3 - omega4)/(2*h);
+    PVector omegaDiv = new PVector((float)omegaDivX, (float)omegaDivY);
+    PVector vorticity = new PVector((float)(omegaDiv.x / (omegaDiv.mag() + epsilon)),
+      (float)(omegaDiv.y / (omegaDiv.mag() + epsilon)));
+    theGrid[i][j].velocity.x += vorticity.x;
+    theGrid[i][j].velocity.y += vorticity.y;
   }
   
   private void advectDensity(int i, int j){
