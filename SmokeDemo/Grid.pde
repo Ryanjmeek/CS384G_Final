@@ -146,6 +146,28 @@ class Grid {
     return maxDiff;
   }
   
+  void updateVelocities(){
+    for(int i = 0; i < N; i++){
+      for(int j = 0; j < N; j++){
+        Cell myCell = getCell(i,j);
+        Cell left = getCell(i - 1, j);
+        Cell right = getCell(i + 1, j);
+        Cell top = getCell(i, j - 1);
+        Cell bot = getCell(i, j + 1);
+        double myPressure = myCell.pressure;
+        double pressureLeft = i == 0 ? myPressure : left.pressure;
+        double pressureRight = i == N - 1 ? myPressure : right.pressure;
+        double pressureTop = j == 0 ? myPressure : top.pressure;
+        double pressureBot = j == N - 1 ? myPressure : bot.pressure;
+        myCell.velocity.x = myCell.velocity.x - delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
+        myCell.velocity.y = myCell.velocity.y - delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
+        
+      }
+    }
+    
+  
+  }
+  
   void project(){
     double[][] divergence = new double[N][N];
     double[][][] coeffs = new double [N][N][5];
@@ -156,6 +178,8 @@ class Grid {
     while(diff > pressureTolerance){
       doIteration(divergence, coeffs, iter);
       iter++;
-    } 
+    }
+    //update the velocity field with pressure info now
+    updateVelocities();
   }
 }
