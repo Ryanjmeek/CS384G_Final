@@ -27,7 +27,7 @@ class Grid {
   }
   
   private void advectDensity(int i, int j){
-      if (theGrid[i][j].isASource()){return;}
+      //if (theGrid[i][j].isASource()){return;}
       float x_prev = i - theGrid[i][j].velocity.x*delta;
       float y_prev = j - theGrid[i][j].velocity.y*delta;
       
@@ -52,7 +52,7 @@ class Grid {
   }
   
   private void advectVelocity(int i, int j){
-        if (theGrid[i][j].isASource()){return;}
+        //if (theGrid[i][j].isASource()){return;}
         float x_prev = i - theGrid[i][j].velocity.x*delta;
         float y_prev = j - theGrid[i][j].velocity.y*delta;
         
