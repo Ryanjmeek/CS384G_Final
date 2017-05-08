@@ -61,7 +61,7 @@ void draw() {
   grid.advect();
   
   //apply body forces
-  //grid.project();
+  grid.project();
   lastTime = millis();
   //println(delta);
 }

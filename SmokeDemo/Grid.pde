@@ -175,7 +175,8 @@ class Grid {
     int iter = 0;
     computeDivergence(divergence);
     computeCoeffs(coeffs);
-    while(diff > pressureTolerance){
+    //while(diff > pressureTolerance){
+    while(iter < 10){
       doIteration(divergence, coeffs, iter);
       iter++;
     }
