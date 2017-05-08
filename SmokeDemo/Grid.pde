@@ -30,8 +30,8 @@ class Grid {
   void applyBodyForces() {
     for(int i = 0; i < N; i++) {
       for(int j = 0; j < N; j++) {
-        //this.applyGravity(i,j);
-        //this.applyBouyancy(i,j);
+        this.applyGravity(i,j);
+        this.applyBouyancy(i,j);
         this.setOmega(i,j);
         this.applyVorticity(i,j);
       }
@@ -39,7 +39,7 @@ class Grid {
   }
   
   private void applyGravity(int i, int j) {
-    PVector gravity = new PVector(0.0, 1);
+    PVector gravity = new PVector(0.0, .001);
     theGrid[i][j].velocity.x += gravity.x;
     theGrid[i][j].velocity.y += gravity.y;
   }
