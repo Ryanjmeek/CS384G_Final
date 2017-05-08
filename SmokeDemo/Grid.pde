@@ -16,7 +16,7 @@ class Grid {
     if(i < 0 || i > N - 1 || j < 0 || j > N - 1){
       return new Cell(0, new PVector(0,0,0), 23, 0, false);
     }
-    //println("This is i: " + i + " and j: " + j);
+    //output.println("This is i: " + i + " and j: " + j);
     return theGrid[i][j];
   }
   
@@ -94,8 +94,10 @@ class Grid {
         if(j != 0) u_top = getCell(i, j - 1).velocity.y;
         if(i != N - 1) u_right = getCell(i + 1, j).velocity.x;
         if(j != N - 1) u_bot = getCell(i, j + 1).velocity.y;
+        output.println("C: " + C + ", u_right: " + u_right + ", u_left: " + u_left + ", u_bot: " + u_bot + ", u_top: " + u_top);
         //this line is doing C*(u_right - u_left + u_bot - u_top)
         divergence[i][j] = C*(u_right - u_left + u_bot - u_top);
+        output.println("in computeDivergence and Cell i: " + i + ", j: " + j + " divergence: " + divergence[i][j] );
       }
     }
   }
@@ -162,7 +164,7 @@ class Grid {
         double pressureBot = j == N - 1 ? myPressure : bot.pressure;
         myCell.velocity.x = myCell.velocity.x - delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
         myCell.velocity.y = myCell.velocity.y - delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
-        println("in updateVelocities and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
+        output.println("in updateVelocities and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
       }
     }
     

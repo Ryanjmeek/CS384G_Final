@@ -2,6 +2,7 @@ import Jama.*;
 
 ParticleSystem ps;
 Grid grid;
+PrintWriter output;
 
 PImage img;
 
@@ -17,7 +18,7 @@ double pressureTolerance = 0.001;
 long lastTime = 0;
 float delta = 0.0;
 
-boolean DRAW_VELOCITY_FIELD = false;
+boolean DRAW_VELOCITY_FIELD = true;
 
 void setup() {
   size(640, 640, P3D);
@@ -27,7 +28,7 @@ void setup() {
   img = loadImage("smokealpha.png");
   img.resize(18, 0);
   //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
-
+  output = createWriter("debug.txt");
   h = (double)width / (double)N;
   
 }
@@ -63,6 +64,7 @@ void draw() {
   //apply body forces
   grid.project();
   lastTime = millis();
+  output.flush();
   //println(delta);
 }
 
