@@ -238,6 +238,8 @@ class Grid {
         double pressureBot = j == N - 1 ? myPressure : bot.pressure;
         myCell.velocity.x = myCell.velocity.x - delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
         myCell.velocity.y = myCell.velocity.y - delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
+        myCell.velocity.x *= 0.1;
+        myCell.velocity.y *= 0.1;
         //output.println("in updateVelocities and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
       }
     }
