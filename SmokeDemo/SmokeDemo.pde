@@ -6,6 +6,8 @@ PrintWriter output;
 
 PImage img;
 
+boolean debug = false;
+
 int N = 120; // dimension of grid
 double h; // size of each voxel
 double diff = 2.0; // diffusion rate
@@ -23,7 +25,7 @@ final double alpha = 1;
 final double beta = 1;
 final double epsilon = 1.0e-20;
 
-boolean DRAW_VELOCITY_FIELD = false;
+boolean DRAW_VELOCITY_FIELD = true;
 
 void setup() {
   size(640, 640, P3D);
@@ -33,7 +35,7 @@ void setup() {
   img = loadImage("smokealpha.png");
   img.resize(50, 0);
   //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
-  //output = createWriter("debug.txt");
+  output = createWriter("debug.txt");
 
   h = (double)width / (double)N;
   
@@ -44,7 +46,7 @@ void draw() {
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
   delta = (millis() - lastTime)/750.0;
-  if(delta < epsilon) return;
+  //if(delta < epsilon) return;
   
   if (DRAW_VELOCITY_FIELD){
     for (int i = 0; i < N; i++){
@@ -66,10 +68,12 @@ void draw() {
     }
   }
   
-  grid.advect();
-  grid.applyBodyForces();
-  grid.project();
-  //output.flush();
+  if(delta > epsilon){
+    grid.advect();
+    //grid.applyBodyForces();
+    //grid.project();
+    output.flush();
+  }
   
   lastTime = millis();
   //println(delta);
