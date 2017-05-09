@@ -19,9 +19,10 @@ double densityTolerance = 0.001;
 double pressureTolerance = 0.001;
 
 final double ambientTemp = 23;
-final double alpha = 1;
-final double beta = 1;
+final double alpha = .05;
+final double beta = .05;
 final double epsilon = 1.0e-20;
+final double zeta = 1;
 
 boolean DRAW_VELOCITY_FIELD = false;
 
@@ -40,11 +41,11 @@ void setup() {
 }
 
 void draw() {
-  background(0);
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
   delta = (millis() - lastTime)/750.0;
   if(delta < epsilon) return;
+  background(0);
   
   if (DRAW_VELOCITY_FIELD){
     for (int i = 0; i < N; i++){
@@ -80,6 +81,7 @@ void draw() {
 */
 void drawSmokeAt(PImage image, int i, int j, double density){
   tint(255, (float)density);
+  imageMode(CENTER);
   image(image, (float)h*i, (float)h*j);
 }
 

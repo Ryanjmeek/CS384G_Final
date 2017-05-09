@@ -34,10 +34,12 @@ class Grid {
   void applyBodyForces() {
     for(int i = 0; i < N; i++) {
       for(int j = 0; j < N; j++) {
-        this.applyGravity(i,j);
-        this.applyBouyancy(i,j);
-        this.setOmega(i,j);
-        this.applyVorticity(i,j);
+        if(theGrid[i][j].density > densityTolerance) {
+          this.applyGravity(i,j);
+          this.applyBouyancy(i,j);
+          this.setOmega(i,j);
+          this.applyVorticity(i,j);
+        }
       }
     }
   }
@@ -49,10 +51,11 @@ class Grid {
   }
   
   private void applyBouyancy(int i, int j) {
-    PVector bouyancy = new PVector(0.0, (float)(-alpha * theGrid[i][j].density
-      + beta * (theGrid[i][j].temperature - ambientTemp)));
+    PVector bouyancy = new PVector(0.0, (float)(alpha * theGrid[i][j].density
+      + -beta * (theGrid[i][j].temperature - ambientTemp)));
     theGrid[i][j].velocity.x += bouyancy.x;
     theGrid[i][j].velocity.y += bouyancy.y;
+    //theGrid[i][j].velocity.y *= -30;
   }
   
   private void setOmega(int i, int j) {
@@ -72,10 +75,13 @@ class Grid {
     double omegaDivX = (omega1 - omega2)/(2*h);
     double omegaDivY = (omega3 - omega4)/(2*h);
     PVector omegaDiv = new PVector((float)omegaDivX, (float)omegaDivY);
-    PVector vorticity = new PVector((float)(omegaDiv.x / (omegaDiv.mag() + epsilon)),
+    PVector N = new PVector((float)(omegaDiv.x / (omegaDiv.mag() + epsilon)),
       (float)(omegaDiv.y / (omegaDiv.mag() + epsilon)));
-    theGrid[i][j].velocity.x += vorticity.x;
-    theGrid[i][j].velocity.y += vorticity.y;
+    // We flip the y because of the grid
+    double confX = (-theGrid[i][j].omega * N.y) * h * zeta;
+    double confY = (theGrid[i][j].omega * N.x) * h * zeta;
+    theGrid[i][j].velocity.x += confX;
+    theGrid[i][j].velocity.y += confY;
   }
   
   private void advectDensity(int i, int j){
@@ -237,7 +243,7 @@ class Grid {
         double pressureTop = j == 0 ? myPressure : top.pressure;
         double pressureBot = j == N - 1 ? myPressure : bot.pressure;
         myCell.velocity.x = myCell.velocity.x - delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
-        myCell.velocity.y = myCell.velocity.y - delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
+        myCell.velocity.y = myCell.velocity.y + delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
         myCell.velocity.x *= 0.1;
         myCell.velocity.y *= 0.1;
         //output.println("in updateVelocities and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
