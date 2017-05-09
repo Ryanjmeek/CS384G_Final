@@ -19,8 +19,8 @@ double densityTolerance = 0.001;
 double pressureTolerance = 0.001;
 
 final double ambientTemp = 23;
-final double alpha = .05;
-final double beta = .05;
+final double alpha = .0005;
+final double beta = 500;
 final double epsilon = 1.0e-20;
 final double zeta = 1;
 
@@ -43,7 +43,8 @@ void setup() {
 void draw() {
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
-  delta = (millis() - lastTime)/750.0;
+  //delta = (millis() - lastTime)/10.0;
+  delta = 2;
   if(delta < epsilon) return;
   background(0);
   

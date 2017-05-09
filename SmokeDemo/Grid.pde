@@ -4,7 +4,7 @@ class Grid {
   Grid(){
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        theGrid[i][j] = new Cell(0.0, new PVector(random(-0.5,0.5),-1), 23.0, 0.0, false);
+        theGrid[i][j] = new Cell(0.0, new PVector(random(-0.0,0.0),-1), 23.0, 0.0, false);
       }
     }
     
@@ -55,7 +55,6 @@ class Grid {
       + -beta * (theGrid[i][j].temperature - ambientTemp)));
     theGrid[i][j].velocity.x += bouyancy.x;
     theGrid[i][j].velocity.y += bouyancy.y;
-    //theGrid[i][j].velocity.y *= -30;
   }
   
   private void setOmega(int i, int j) {
@@ -158,6 +157,7 @@ class Grid {
         
         theGrid[i][j].velocity = v_mid;
   }
+  
   void computeDivergence(double[][] divergence){
     double C = (-2*h*smokeWeight/delta);
     for(int i=0; i < N; i++){
@@ -238,14 +238,14 @@ class Grid {
         Cell top = getCell(i, j - 1);
         Cell bot = getCell(i, j + 1);
         double myPressure = myCell.pressure;
-        double pressureLeft = i == 0 ? myPressure : left.pressure;
-        double pressureRight = i == N - 1 ? myPressure : right.pressure;
-        double pressureTop = j == 0 ? myPressure : top.pressure;
-        double pressureBot = j == N - 1 ? myPressure : bot.pressure;
+        double pressureLeft = left.pressure;
+        double pressureRight = right.pressure;
+        double pressureTop = top.pressure;
+        double pressureBot = bot.pressure;
         myCell.velocity.x = myCell.velocity.x - delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
         myCell.velocity.y = myCell.velocity.y + delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
-        myCell.velocity.x *= 0.1;
-        myCell.velocity.y *= 0.1;
+        //myCell.velocity.x *= 0.1;
+        //myCell.velocity.y *= 0.1;
         //output.println("in updateVelocities and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
       }
     }
