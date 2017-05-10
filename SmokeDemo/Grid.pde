@@ -1,6 +1,7 @@
 class Grid {
   Cell[][] theGrid = new Cell[N][N];
   Cell theSource;
+  double[][] newPressure = new double[N][N];
   
   Grid(){
     
@@ -285,7 +286,7 @@ class Grid {
         double pressureNew = coeffs[i][j][0]*divergence[i][j] + coeffs[i][j][1]*pressureLeft + coeffs[i][j][2]*pressureRight
                                                                         + coeffs[i][j][3]*pressureTop + coeffs[i][j][4]*pressureBot;
         double diff = (double) abs((float) (pressureNew - pressureOld));
-        myCell.pressure = pressureNew;
+        newPressure[i][j] = pressureNew;
         if(debugIteration) output.println("in doIteration and this is i: " + i + ", j: " + j + ", pressureNew: " + pressureNew + ", pressureOld: " + pressureOld);
         if(diff > maxDiff) maxDiff = diff;                        
       }
@@ -347,6 +348,13 @@ class Grid {
       }
     }
   }
+  void updatePressures(){
+    for(int i=0; i < N; i++){
+      for(int j=0; j< N; j++){
+        getCell(i,j).pressure = newPressure[i][j];
+      }
+    }
+  }
   
   void project(){
     double[][] divergence = new double[N][N];
@@ -358,7 +366,8 @@ class Grid {
     //while(diff > pressureTolerance){
     while(iter < 10){
       diff = doIteration(divergence, coeffs, iter);
-      debugProject(divergence, coeffs);
+      updatePressures();
+      //debugProject(divergence, coeffs);
       if(debug) output.println("in project and this is iter: " + iter + ", maxDiff: " + diff);
       iter++;
     }
