@@ -22,11 +22,21 @@ class Grid {
   
   void advect(){
     theGrid[N/2][N/2] = new Cell(0.0, new PVector(0,-1), 23.0, 1.0, true); // source
+    double[][] dens = new double[N][N];
+    double[][] temp = new double[N][N];
+    PVector[][] vel = new PVector[N][N];
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        this.advectDensity(i,j);
-        this.advectTemperature(i,j);
-        this.advectVelocity(i,j);
+        dens[i][j] = theGrid[i][j].density;
+        temp[i][j] = theGrid[i][j].temperature;
+        vel[i][j] = theGrid[i][j].velocity;
+      }
+    }
+    for (int i = 0; i < N; i++){
+      for (int j = 0; j < N; j++){
+        this.advectDensity(i,j,dens);
+        this.advectTemperature(i,j,temp);
+        this.advectVelocity(i,j,vel);
       }
     }
   }
@@ -83,7 +93,7 @@ class Grid {
     theGrid[i][j].velocity.y += confY;
   }
   
-  private void advectDensity(int i, int j){
+  private void advectDensity(int i, int j, double[][] dens){
       //if (theGrid[i][j].isASource()){return;}
       float x_prev = i - theGrid[i][j].velocity.x*delta;
       float y_prev = j - theGrid[i][j].velocity.y*delta;
@@ -95,10 +105,10 @@ class Grid {
       
       //println("x_prev = " + x_prev + ", y_prev = " + y_prev);
       
-      double d_bl = theGrid[floor(x_prev)][floor(y_prev)].density;
-      double d_tl = theGrid[floor(x_prev)][ceil(y_prev)].density;
-      double d_br = theGrid[ceil(x_prev)][floor(y_prev)].density;
-      double d_tr = theGrid[ceil(x_prev)][ceil(y_prev)].density;
+      double d_bl = dens[floor(x_prev)][floor(y_prev)];
+      double d_tl = dens[floor(x_prev)][ceil(y_prev)];
+      double d_br = dens[ceil(x_prev)][floor(y_prev)];
+      double d_tr = dens[ceil(x_prev)][ceil(y_prev)];
       
       double d_ml = lerp((float)d_bl, (float)d_tl, (float)((y_prev-floor(y_prev))/h));
       double d_mr = lerp((float)d_br, (float)d_tr, (float)((y_prev-floor(y_prev))/h));
@@ -108,7 +118,7 @@ class Grid {
       theGrid[i][j].density = d_mid;
   }
   
-    private void advectTemperature(int i, int j){
+    private void advectTemperature(int i, int j, double[][] temp){
       if (theGrid[i][j].isASource()){return;}
       float x_prev = i - theGrid[i][j].velocity.x*delta;
       float y_prev = j - theGrid[i][j].velocity.y*delta;
@@ -120,10 +130,10 @@ class Grid {
       
       //println("x_prev = " + x_prev + ", y_prev = " + y_prev);
       
-      double t_bl = theGrid[floor(x_prev)][floor(y_prev)].temperature;
-      double t_tl = theGrid[floor(x_prev)][ceil(y_prev)].temperature;
-      double t_br = theGrid[ceil(x_prev)][floor(y_prev)].temperature;
-      double t_tr = theGrid[ceil(x_prev)][ceil(y_prev)].temperature;
+      double t_bl = temp[floor(x_prev)][floor(y_prev)];
+      double t_tl = temp[floor(x_prev)][ceil(y_prev)];
+      double t_br = temp[ceil(x_prev)][floor(y_prev)];
+      double t_tr = temp[ceil(x_prev)][ceil(y_prev)];
       
       double t_ml = lerp((float)t_bl, (float)t_tl, (float)((y_prev-floor(y_prev))/h));
       double t_mr = lerp((float)t_br, (float)t_tr, (float)((y_prev-floor(y_prev))/h));
@@ -133,7 +143,7 @@ class Grid {
       theGrid[i][j].temperature = t_mid;
   }
   
-  private void advectVelocity(int i, int j){
+  private void advectVelocity(int i, int j, PVector[][] vel){
         //if (theGrid[i][j].isASource()){return;}
         float x_prev = i - theGrid[i][j].velocity.x*delta;
         float y_prev = j - theGrid[i][j].velocity.y*delta;
@@ -145,10 +155,10 @@ class Grid {
         
         //println("x_prev = " + x_prev + ", y_prev = " + y_prev);
         
-        PVector v_bl = theGrid[floor(x_prev)][floor(y_prev)].velocity;
-        PVector v_tl = theGrid[floor(x_prev)][ceil(y_prev)].velocity;
-        PVector v_br = theGrid[ceil(x_prev)][floor(y_prev)].velocity;
-        PVector v_tr = theGrid[ceil(x_prev)][ceil(y_prev)].velocity;
+        PVector v_bl = vel[floor(x_prev)][floor(y_prev)];
+        PVector v_tl = vel[floor(x_prev)][ceil(y_prev)];
+        PVector v_br = vel[ceil(x_prev)][floor(y_prev)];
+        PVector v_tr = vel[ceil(x_prev)][ceil(y_prev)];
         
         PVector v_ml = new PVector( lerp((float)v_bl.x, (float)v_tl.x, (float)((y_prev-floor(y_prev))/h)) , lerp((float)v_bl.y, (float)v_tl.y, (float)((y_prev-floor(y_prev))/h)) );
         PVector v_mr = new PVector( lerp((float)v_br.x, (float)v_tr.x, (float)((y_prev-floor(y_prev))/h)) , lerp((float)v_br.y, (float)v_tr.y, (float)((y_prev-floor(y_prev))/h)) );
@@ -164,14 +174,6 @@ class Grid {
       for(int j=0; j < N; j++){
         PVector u = getCell(i, j).velocity;
         //for edge conditions, values will remain as velocity of current cell
-        /*double u_left = u.x;
-        double u_right = u.x; 
-        double u_top = u.y;
-        double u_bot = u.y;
-        if(i != 0) u_left = getCell(i - 1, j).velocity.x;
-        if(j != 0) u_top = getCell(i, j - 1).velocity.y;
-        if(i != N - 1) u_right = getCell(i + 1, j).velocity.x;
-        if(j != N - 1) u_bot = getCell(i, j + 1).velocity.y;*/
         double u_left = getCell(i - 1, j).velocity.x;
         double u_top = getCell(i, j - 1).velocity.y;
         double u_right = getCell(i + 1, j).velocity.x;

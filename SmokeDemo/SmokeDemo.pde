@@ -21,7 +21,7 @@ final double ambientTemp = 23;
 final double alpha = .0005;
 final double beta = 500;
 final double epsilon = 1.0e-20;
-final double zeta = .25;
+final double zeta = 0.1;
 
 boolean DRAW_VELOCITY_FIELD = false;
 
@@ -65,7 +65,7 @@ void draw() {
 
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density * 10);
+      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density);
     }
   }
   
