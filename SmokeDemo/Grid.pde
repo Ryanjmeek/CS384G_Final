@@ -58,12 +58,14 @@ class Grid {
     //theGrid[N/2][N/2] = new Cell(1.0, new PVector(0,-1), 585.0, 1.0, false); // source
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        this.advectDensity(i,j);
-        this.advectTemperature(i,j);
+        //this.advectDensity(i,j);
+        //this.advectTemperature(i,j);
         this.advectVelocity(i,j);
       }
     }
   }
+  
+  
   
   void applyBodyForces() {
     for(int i = 0; i < N; i++) {
@@ -74,7 +76,7 @@ class Grid {
         if(debug) output.println("velocity before BodyForces x: " + theGrid[i][j].velocity.x + ", y: " + theGrid[i][j].velocity.y);
         if(debug && j < N - 4) output.println("velocity before BodyForces x: " + theGrid[i][j + 3].velocity.x + ", y: " + theGrid[i][j + 3].velocity.y);
         this.applyGravity(i,j);
-        this.applyBouyancy(i,j);
+        //this.applyBouyancy(i,j);
         if(debug) output.println("velocity after BodyForces x: " + theGrid[i][j].velocity.x + ", y: " + theGrid[i][j].velocity.y);
         if(debug && j < N - 4) output.println("velocity after BodyForces x: " + theGrid[i][j + 3].velocity.x + ", y: " + theGrid[i][j + 3].velocity.y);
         //this.setOmega(i,j);
@@ -213,11 +215,10 @@ class Grid {
         theGrid[i][j].velocity = v_mid;
   }
   
-  boolean debugDivergence = true;
+  boolean debugDivergence = false;
   void computeDivergence(double[][] divergence){
-    double C = (-2*h*smokeWeight/delta);
-    //double C = (-2*h*smokeWeight/2);
-    //C = C*0.05;
+    //double C = (-2*h*smokeWeight/delta);
+    double C = -2*h*smokeWeight;
     if(debugDivergence) output.println("in computeDivergence this is delta: " + delta);
     for(int i=0; i < N; i++){
       for(int j=0; j < N; j++){
@@ -269,10 +270,10 @@ class Grid {
       for(int j = 0; j < N; j++){
         Cell myCell = getCell(i,j);
         //fif (myCell.isASource()){continue;}
-        if(myCell.density < densityTolerance){
+        /*if(myCell.density < densityTolerance){
           myCell.pressure = 0;
           continue;
-        }
+        }*/
         Cell left = getCell(i - 2, j);
         Cell right = getCell(i + 2, j);
         Cell top = getCell(i, j - 2);
@@ -284,6 +285,7 @@ class Grid {
         double pressureBot = iter == 0 ? 0.0 : bot.pressure;
         double pressureNew = coeffs[i][j][0]*divergence[i][j] + coeffs[i][j][1]*pressureLeft + coeffs[i][j][2]*pressureRight
                                                                         + coeffs[i][j][3]*pressureTop + coeffs[i][j][4]*pressureBot;
+        //double pressureNew = divergence[i][j] + pressureLeft + pressureRight + pressureTop + pressureBot;                                                       
         double diff = (double) abs((float) (pressureNew - pressureOld));
         myCell.pressure = pressureNew;
         if(debugIteration) output.println("in doIteration and this is i: " + i + ", j: " + j + ", pressureNew: " + pressureNew + ", pressureOld: " + pressureOld);
@@ -323,7 +325,7 @@ class Grid {
     
   
   }
-  boolean debugProject = true;
+  boolean debugProject = false;
   void debugProject(double[][] divergence, double[][][] coeffs){
     for(int i = 0; i < N; i++){
       for(int j = 0; j < N; j++){

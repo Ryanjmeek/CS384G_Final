@@ -6,7 +6,7 @@ PrintWriter output;
 
 PImage img;
 
-boolean debug = true;
+boolean debug = false;
 boolean printVelocities = false;
 
 int N = 120; // dimension of grid
@@ -15,7 +15,7 @@ double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
 long lastTime = 0;
-float delta = 0.1;
+float delta = 0.01;
 
 double smokeWeight = 1;
 double densityTolerance = 0.001;
@@ -39,6 +39,7 @@ void setup() {
   //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
 
   h = (double)width / (double)N;
+  output.println("This is h: " + h);
   
 }
 
@@ -68,7 +69,7 @@ void draw() {
 
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density);
+      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).velocity.mag());
     }
   }
   
