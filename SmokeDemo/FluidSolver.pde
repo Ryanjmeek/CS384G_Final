@@ -1,15 +1,29 @@
 class FluidSolver {
   FluidCell[][] theGrid = new FluidCell[N][N];
+  int newPressure;
+  int oldPressure;
   
   FluidSolver(){
     //TODO
-    
+    newPressure = 1;
+    oldPressure = 0;
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
         theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0));
       }
     }
     
+  }
+  
+  void addMouseForce(){
+    var x = clamp(mouseX*sx, 1, WIDTH-2),
+        y = clamp(mouseY*sy, 1, HEIGHT-2),
+        dx = mouseX-lastMouseX,
+        dy = mouseY-lastMouseY;
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
+    ux(x, y, ux(x, y)-dx*2);
+    uy(x, y, uy(x, y)-dy*2);
   }
   
   void velocityBoundary(){
@@ -106,32 +120,50 @@ class FluidSolver {
     }
   }
   
-  function fastjacobi(p0, p1, b, alpha, beta, iterations){
-      p0 = p0.a;
-      p1 = p1.a;
-      b = b.a;
+  void fastjacobi(float alpha, float beta, int iterations){
       //for(var i = 0; i < pressureField0.length; i++) {
           //pressureField0[i] = 0.5;
           //pressureField1[i] = pressureField0[i];
       //}
-  
-      for(i = 0; i < iterations; i++) {
-          for(var y = 1; y < N-1; y++) {
-              for(var x = 1; x < N-1; x++) {
-                  int pi = x+y*WIDTH,
-                  float x0 = p0[pi-1],
-                      x1 = p0[pi+1],
-                      y0 = p0[pi-WIDTH],
-                      y1 = p0[pi+WIDTH];
-                  p1[pi] = (x0 + x1 + y0 + y1 + alpha * b[pi]) * beta;
-              }
-          }
-          var aux = p0;
-          p0 = p1;
-          p1 = aux;
-          //pressureboundary(p0);
+      for(int y = 0; y < N-1; y++) {
+        for(int x = 0; x < N-1; x++) {
+            theGrid[x][y].pressure[0] = 0;
+            theGrid[x][y].pressure[1] = 0;
+        }
+      }
+      
+      for(int i = 0; i < iterations; i++) {
+        int swap = newPressure;
+        newPressure = oldPressure;
+        oldPressure = swap;
+        for(int y = 1; y < N-1; y++) {
+            for(int x = 1; x < N-1; x++) {
+                float x0 = getCell(x-1,y).pressure[oldPressure];
+                float x1 = getCell(x+1,y).pressure[oldPressure];
+                float y0 = getCell(x,y-1).pressure[oldPressure];
+                float y1 = getCell(x,y+1).pressure[oldPressure];
+                getCell(x-1).pressure[newPressure] = (x0 + x1 + y0 + y1 + alpha * b[pi]) * beta;
+            }
+        }
       }
   }
+  
+  void subtractPressureGradient(ux, uy, p){
+    for(int y = 1; y < HEIGHT-1; y++) {
+        for(int x = 1; x < WIDTH-1; x++) {
+            float x0 = getCell(x-1,y).pressure[newPressure];
+            float x1 = getCell(x+1,y).pressure[newPressure];
+            float y0 = getCell(x,y-1).pressure[newPressure];
+            float y1 = getCell(x,y+1).pressure[newPressure];
+            float dx = (x1-x0)/2,
+            float dy = (y1-y0)/2;
+            FluidCell myCell = getCell(x,y);
+            myCell.vx = myCell.vx - dx;
+            myCell.vy = myCell.vy - dy;
+        }
+    }
+  }
+
   
 
 }
