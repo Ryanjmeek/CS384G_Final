@@ -1,7 +1,7 @@
 import Jama.*;
 
 ParticleSystem ps;
-Grid grid;
+FluidSolver grid;
 PrintWriter output;
 
 PImage img;
@@ -9,7 +9,7 @@ PImage img;
 boolean debug = false;
 boolean printVelocities = false;
 
-int N = 120; // dimension of grid
+int N = 640; // dimension of grid
 double h; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
@@ -32,7 +32,7 @@ void setup() {
   size(640, 640, P3D);
   
   output = createWriter("debug.txt");
-  grid = new Grid();
+  grid = new FluidSolver();
   
   img = loadImage("smokealpha.png");
   img.resize(50, 0);
