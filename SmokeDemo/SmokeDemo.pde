@@ -1,6 +1,5 @@
 import Jama.*;
 
-ParticleSystem ps;
 Grid grid;
 PrintWriter output;
 
@@ -22,7 +21,7 @@ final double ambientTemp = 23;
 final double alpha = .0005;
 final double beta = 500;
 final double epsilon = 1.0e-20;
-final double zeta = 1;
+final double zeta = .001;
 
 boolean DRAW_VELOCITY_FIELD = false;
 
@@ -55,7 +54,9 @@ void draw() {
           stroke(255, 0, 0);
         }
         else {
+          //stroke((int)grid.getCell(i,j).pressure, 0, 0);
           stroke(255, 255, 255);
+
         }
         drawVector((new PVector(grid.getCell(i,j).velocity.x, grid.getCell(i,j).velocity.y)).normalize(), new PVector((float)((i+0.5)*h),(float)((j+0.5)*h)), 0.1);
       }
@@ -102,107 +103,4 @@ void drawVector(PVector v, PVector loc, float scayl) {
   line(len, 0, len-arrowsize, +arrowsize/2);
   line(len, 0, len-arrowsize, -arrowsize/2);
   popMatrix();
-}
-
-
-// A class to describe a group of Particles
-// An ArrayList is used to manage the list of Particles 
-
-class ParticleSystem {
-
-  ArrayList<Particle> particles;    // An arraylist for all the particles
-  PVector origin;                   // An origin point for where particles are birthed
-  PImage img;
-
-  ParticleSystem(int num, PVector v, PImage img_) {
-    particles = new ArrayList<Particle>();              // Initialize the arraylist
-    origin = v.copy();                                   // Store the origin point
-    img = img_;
-    for (int i = 0; i < num; i++) {
-      particles.add(new Particle(origin, img));         // Add "num" amount of particles to the arraylist
-    }
-  }
-
-  void run() {
-    for (int i = particles.size()-1; i >= 0; i--) {
-      Particle p = particles.get(i);
-      p.run();
-      if (p.isDead()) {
-        particles.remove(i);
-      }
-    }
-  }
-
-  // Method to add a force vector to all particles currently in the system
-  void applyForce(PVector dir) {
-    // Enhanced loop!!!
-    for (Particle p : particles) {
-      p.applyForce(dir);
-    }
-  }  
-
-  void addParticle() {
-    particles.add(new Particle(origin, img));
-  }
-}
-
-
-
-// A simple Particle class, renders the particle as an image
-
-class Particle {
-  PVector loc;
-  PVector vel;
-  PVector acc;
-  float lifespan;
-  PImage img;
-
-  Particle(PVector l, PImage img_) {
-    acc = new PVector(0, 0);
-    float vx = 0;//randomGaussian()*0.3;
-    float vy = randomGaussian()*0.3 - 1.0;
-    vel = new PVector(vx, vy);
-    loc = l.copy();
-    lifespan = 100.0;
-    img = img_;
-  }
-
-  void run() {
-    update();
-    render();
-  }
-
-  // Method to apply a force vector to the Particle object
-  // Note we are ignoring "mass" here
-  void applyForce(PVector f) {
-    acc.add(f);
-  }  
-
-  // Method to update position
-  void update() {
-    vel.add(acc);
-    loc.add(vel);
-    lifespan -= 1.0;
-    acc.mult(0); // clear Acceleration
-  }
-
-  // Method to display
-  void render() {
-    imageMode(CENTER);
-    tint(255, lifespan);
-    image(img, loc.x, loc.y);
-    // Drawing a circle instead
-    // fill(255,lifespan);
-    // noStroke();
-    // ellipse(loc.x,loc.y,img.width,img.height);
-  }
-
-  // Is the particle still useful?
-  boolean isDead() {
-    if (lifespan <= 0.0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }

@@ -14,7 +14,7 @@ class Grid {
   
   Cell getCell(int i, int j){
     if(i < 0 || i > N - 1 || j < 0 || j > N - 1){
-      return new Cell(0, new PVector(0,0,0), 23, 0, false);
+      return new Cell(0, new PVector(0,-1), 23, 0, false);
     }
     //output.println("This is i: " + i + " and j: " + j);
     return theGrid[i][j];
@@ -164,16 +164,19 @@ class Grid {
       for(int j=0; j < N; j++){
         PVector u = getCell(i, j).velocity;
         //for edge conditions, values will remain as velocity of current cell
-        double u_left = u.x;
+        /*double u_left = u.x;
         double u_right = u.x; 
         double u_top = u.y;
         double u_bot = u.y;
         if(i != 0) u_left = getCell(i - 1, j).velocity.x;
         if(j != 0) u_top = getCell(i, j - 1).velocity.y;
         if(i != N - 1) u_right = getCell(i + 1, j).velocity.x;
-        if(j != N - 1) u_bot = getCell(i, j + 1).velocity.y;
+        if(j != N - 1) u_bot = getCell(i, j + 1).velocity.y;*/
+        double u_left = getCell(i - 1, j).velocity.x;
+        double u_top = getCell(i, j - 1).velocity.y;
+        double u_right = getCell(i + 1, j).velocity.x;
+        double u_bot = getCell(i, j + 1).velocity.y;
         //output.println("C: " + C + ", u_right: " + u_right + ", u_left: " + u_left + ", u_bot: " + u_bot + ", u_top: " + u_top);
-        //this line is doing C*(u_right - u_left + u_bot - u_top)
         divergence[i][j] = C*(u_right - u_left + u_bot - u_top);
         //output.println("in computeDivergence and Cell i: " + i + ", j: " + j + " divergence: " + divergence[i][j] );
       }
@@ -184,15 +187,16 @@ class Grid {
     for(int i=0; i < N; i++){
       for(int j=0; j < N; j++){
         //coefficients
-        double cleft = 1, cright = 1, ctop = 1, cbot = 1;
+        //double cleft = 1, cright = 1, ctop = 1, cbot = 1;
+        double cleft = 0, cright = 0, ctop = 0, cbot = 0;
         Cell left = getCell(i - 2, j);
         Cell right = getCell(i + 2, j);
         Cell top = getCell(i, j - 2);
         Cell bot = getCell(i, j + 2);
-        if(left.density < densityTolerance) cleft = 0; 
+        /*if(left.density < densityTolerance) cleft = 0; 
         if(right.density < densityTolerance) cright = 0;
         if(top.density < densityTolerance) ctop = 0;
-        if(bot.density < densityTolerance) cbot = 0;
+        if(bot.density < densityTolerance) cbot = 0;*/
         double cdiv = 4;
         coeffs[i][j][0] = 1/cdiv;
         coeffs[i][j][1] = cleft/cdiv;
@@ -219,7 +223,7 @@ class Grid {
         double pressureTop = iter == 0 ? 0.0 : top.pressure;
         double pressureBot = iter == 0 ? 0.0 : bot.pressure;
         double pressureNew = coeffs[i][j][0]*divergence[i][j] + coeffs[i][j][1]*pressureLeft + coeffs[i][j][2]*pressureRight
-                                                                        + coeffs[i][j][3]*pressureTop + coeffs[i][j][4]*pressureBot;
+          + coeffs[i][j][3]*pressureTop + coeffs[i][j][4]*pressureBot;
         double diff = (double) abs((float) (pressureNew - pressureOld));
         myCell.pressure = pressureNew;
         //output.println("in doIteration and this is i: " + i + ", j: " + j + ", pressureNew: " + pressureNew);
@@ -227,6 +231,24 @@ class Grid {
       }
     }
     return maxDiff;
+  }
+  
+  void doIterationNew(double[][] divergence) {
+    for(int i = 0; i < N; i++){
+      for(int j = 0; j < N; j++){
+        Cell myCell = getCell(i,j);
+        Cell left = getCell(i - 2, j);
+        Cell right = getCell(i + 2, j);
+        Cell top = getCell(i, j - 2);
+        Cell bot = getCell(i, j + 2);
+        double pressureLeft = left.pressure;
+        double pressureRight = right.pressure;
+        double pressureTop = top.pressure;
+        double pressureBot = bot.pressure;
+        myCell.pressure = 0.25 * (divergence[i][j] + pressureLeft + pressureRight + pressureTop + pressureBot);
+        //output.println("in doIteration and this is i: " + i + ", j: " + j + ", pressureNew: " + pressureNew);                      
+      }
+    }
   }
   
   void updateVelocities(){
@@ -244,8 +266,6 @@ class Grid {
         double pressureBot = bot.pressure;
         myCell.velocity.x = myCell.velocity.x - delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
         myCell.velocity.y = myCell.velocity.y + delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
-        //myCell.velocity.x *= 0.1;
-        //myCell.velocity.y *= 0.1;
         //output.println("in updateVelocities and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
       }
     }
@@ -261,8 +281,9 @@ class Grid {
     computeDivergence(divergence);
     computeCoeffs(coeffs);
     //while(diff > pressureTolerance){
-    while(iter < 10){
+    while(iter < 20){
       doIteration(divergence, coeffs, iter);
+      //doIterationNew(divergence);
       iter++;
     }
     //update the velocity field with pressure info now
