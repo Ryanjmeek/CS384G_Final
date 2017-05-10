@@ -43,7 +43,7 @@ void draw() {
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
   //delta = (millis() - lastTime)/10.0;
-  delta = 2;
+  delta = 0.5;
   if(delta < epsilon) return;
   background(0);
   
@@ -65,7 +65,7 @@ void draw() {
 
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density * 10);
+      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density);
     }
   }
   

@@ -4,7 +4,7 @@ class Grid {
   Grid(){
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        theGrid[i][j] = new Cell(0.0, new PVector(random(-0.0,0.0),-1), 23.0, 0.0, false);
+        theGrid[i][j] = new Cell(0.0, new PVector(random(-0.5,0.5),-1), 23.0, 0.0, false);
       }
     }
     
@@ -256,9 +256,13 @@ class Grid {
       for(int j = 0; j < N; j++){
         Cell myCell = getCell(i,j);
         Cell left = getCell(i - 1, j);
+        if (i-1 < 0) { continue; }
         Cell right = getCell(i + 1, j);
+        if (i+1 > N-1) { continue; }
         Cell top = getCell(i, j - 1);
+        if (j-1 < 0) { continue; }
         Cell bot = getCell(i, j + 1);
+        if (j+1 > N-1) { continue; }
         double myPressure = myCell.pressure;
         double pressureLeft = left.pressure;
         double pressureRight = right.pressure;
