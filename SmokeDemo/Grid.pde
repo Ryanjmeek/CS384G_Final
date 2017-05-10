@@ -4,7 +4,7 @@ class Grid {
   Grid(){
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        theGrid[i][j] = new Cell(0.0, new PVector(random(-0.5,0.5),-1), 23.0, 0.0, false);
+        theGrid[i][j] = new Cell(0.0, new PVector(random(-0.0,0.0),-1), 23.0, 0.0, false);
       }
     }
     
