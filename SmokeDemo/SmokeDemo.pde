@@ -6,7 +6,8 @@ PrintWriter output;
 
 PImage img;
 
-boolean debug = false;
+boolean debug = true;
+boolean printVelocities = false;
 
 int N = 120; // dimension of grid
 double h; // size of each voxel
@@ -14,28 +15,28 @@ double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
 long lastTime = 0;
-float delta = 0.0;
+float delta = 0.1;
 
 double smokeWeight = 1;
 double densityTolerance = 0.001;
 double pressureTolerance = 0.001;
 
 final double ambientTemp = 23;
-final double alpha = 1;
-final double beta = 1;
+final double alpha = 0.05;
+final double beta = 50;
 final double epsilon = 1.0e-20;
 
-boolean DRAW_VELOCITY_FIELD = true;
+boolean DRAW_VELOCITY_FIELD = false;
 
 void setup() {
   size(640, 640, P3D);
   
+  output = createWriter("debug.txt");
   grid = new Grid();
   
   img = loadImage("smokealpha.png");
   img.resize(50, 0);
   //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
-  output = createWriter("debug.txt");
 
   h = (double)width / (double)N;
   
@@ -45,18 +46,21 @@ void draw() {
   background(0);
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
-  delta = (millis() - lastTime)/750.0;
+  //delta = (millis() - lastTime)/100;
+  //delta = 0.1;
   //if(delta < epsilon) return;
   
   if (DRAW_VELOCITY_FIELD){
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        if (grid.getCell(i,j).isASource()){
-          stroke(255, 0, 0);
+        if (grid.getCell(i,j).density > densityTolerance){
+          stroke((float)grid.getCell(i,j).pressure, 0, 0);
         }
         else {
           stroke(255, 255, 255);
         }
+        if(printVelocities) output.println("in draw and cell i: " + i + ", j: " + j + ", velocity.x" 
+                                    + grid.getCell(i,j).velocity.x + ", velocity.y" + grid.getCell(i,j).velocity.y);
         drawVector((new PVector(grid.getCell(i,j).velocity.x, grid.getCell(i,j).velocity.y)).normalize(), new PVector((float)((i+0.5)*h),(float)((j+0.5)*h)), 0.1);
       }
     }
@@ -70,8 +74,8 @@ void draw() {
   
   if(delta > epsilon){
     grid.advect();
-    //grid.applyBodyForces();
-    //grid.project();
+    grid.applyBodyForces();
+    grid.project();
     output.flush();
   }
   
@@ -84,6 +88,7 @@ void draw() {
 */
 void drawSmokeAt(PImage image, int i, int j, double density){
   tint(255, (float)density);
+  imageMode(CENTER);
   image(image, (float)h*i, (float)h*j);
 }
 
