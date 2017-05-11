@@ -2,6 +2,8 @@ class FluidSolver {
   FluidCell[][] theGrid = new FluidCell[N][N];
   int newPressure;
   int oldPressure;
+  int newVelocity;
+  int oldVelocity;
   
   FluidSolver(){
     //TODO
@@ -16,10 +18,10 @@ class FluidSolver {
   }
   
   void addMouseForce(){
-    var x = clamp(mouseX*sx, 1, WIDTH-2),
-        y = clamp(mouseY*sy, 1, HEIGHT-2),
-        dx = mouseX-lastMouseX,
-        dy = mouseY-lastMouseY;
+    float x = clamp(mouseX*sx, 1, WIDTH-2),
+    float y = clamp(mouseY*sy, 1, HEIGHT-2),
+    float dx = mouseX-lastMouseX,
+    float dy = mouseY-lastMouseY;
     lastMouseX = mouseX;
     lastMouseY = mouseY;
     ux(x, y, ux(x, y)-dx*2);
@@ -68,10 +70,10 @@ class FluidSolver {
       int y0 = floor(y);
       int x1 = x0+1;
       int y1 = y0+1;
-      float p00 = getCell(x0,y0).vx;
-      float p01 = getCell(x0,y1).vx;
-      float p10 = getCell(x1,y0).vx;
-      float p11 = getCell(x1,y1).vx;
+      float p00 = getCell(x0,y0).vx[oldVelocity];
+      float p01 = getCell(x0,y1).vx[oldVelocity];
+      float p10 = getCell(x1,y0).vx[oldVelocity];
+      float p11 = getCell(x1,y1).vx[oldVelocity];
       return lerp(lerp(p00, p10, x-x0), lerp(p01, p11, x-x0), y-y0);
   }
   
@@ -80,10 +82,10 @@ class FluidSolver {
       int y0 = floor(y);
       int x1 = x0+1;
       int y1 = y0+1;
-      float p00 = getCell(x0,y0).vy;
-      float p01 = getCell(x0,y1).vy;
-      float p10 = getCell(x1,y0).vy;
-      float p11 = getCell(x1,y1).vy;
+      float p00 = getCell(x0,y0).vy[oldVelocity];
+      float p01 = getCell(x0,y1).vy[oldVelocity];
+      float p10 = getCell(x1,y0).vy[oldVelocity];
+      float p11 = getCell(x1,y1).vy[oldVelocity];
       return lerp(lerp(p00, p10, x-x0), lerp(p01, p11, x-x0), y-y0);
   }
   
@@ -96,8 +98,8 @@ class FluidSolver {
             
             dest(x, y, bilerp(src, x+vx, y+vy));
             //TODO this might need to be a x +vx instead of x-vx
-            myCell.vx = bilerpVelocityX(x-vx,y-vy);
-            myCell.vy = bilerpVelocityY(x-vx,y-vy);
+            myCell.vx[newVelocity] = bilerpVelocityX(x-vx,y-vy);
+            myCell.vy[newVelocity] = bilerpVelocityY(x-vx,y-vy);
         }
     }
   }
@@ -158,8 +160,8 @@ class FluidSolver {
             float dx = (x1-x0)/2,
             float dy = (y1-y0)/2;
             FluidCell myCell = getCell(x,y);
-            myCell.vx = myCell.vx - dx;
-            myCell.vy = myCell.vy - dy;
+            myCell.vx[newVelocity] = myCell.vx[newVelocity] - dx;
+            myCell.vy[newVelocity] = myCell.vy[newVelocity] - dy;
         }
     }
   }

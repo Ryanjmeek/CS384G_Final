@@ -1,6 +1,6 @@
 class FluidCell {
-  float vx;
-  float vy;
+  float[] vx;
+  float[] vy;
   float divergence;
   float[] pressure;
   
