@@ -1,7 +1,7 @@
 class SmokeForces{
   FluidSolver parent;
   static final float alpha = 0.00001;
-  static final float beta = 0.0001;
+  static final float beta = 0.0005;
   static final float zeta = 1;
   float[][] omega;
   

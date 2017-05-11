@@ -8,10 +8,10 @@ class FluidSolver {
   float lastMouseX;
   float lastMouseY;
   static final float TIME_STEP = 1.0;
-  static final float SMOKE_START_X = ((N/2) - 20);
-  static final float SMOKE_END_X = ((N/2) + 20);
-  static final float SMOKE_START_Y = ((N/2) - 20);
-  static final float SMOKE_END_Y = ((N/2) + 20);
+  static final int SMOKE_START_X = ((N/2) - 10);
+  static final int SMOKE_END_X = ((N/2) + 10);
+  static final int SMOKE_START_Y = (N - 6);
+  static final int SMOKE_END_Y = (N - 1);
 
   FluidSolver(){
     newPressure = 1;
@@ -20,15 +20,9 @@ class FluidSolver {
     curVals = 1;
     smoke = new SmokeForces(this); 
     for (int i = 0; i < N; i++){
-      for (int j = 0; j < N; j++){
-        if(isSmoke(i,j)){
+      for (int j = 0; j < N; j++){        
           //theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
-          theGrid[i][j] = new FluidCell(0,-0.05, 1);
-        }
-        else{
-          //theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
-          theGrid[i][j] = new FluidCell(0,-0.05);
-        }
+          theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0));
       }
     }
     
@@ -42,7 +36,16 @@ class FluidSolver {
     
   }
   
+  void injectSmoke(){
+    for(int i = SMOKE_START_X; i < SMOKE_END_X; i++){
+      for(int j = SMOKE_START_Y; j < SMOKE_END_Y; j++){
+        theGrid[i][j] = new FluidCell(random(-10.0,10.0),-0.05, 1);
+      }  
+    }
+  }
+  
   void simulate(){
+    injectSmoke();
     velocityBoundary();
     advect(TIME_STEP);
     //addMouseForce();
