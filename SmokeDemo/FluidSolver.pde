@@ -28,7 +28,7 @@ class FluidSolver {
     addMouseForce();
     computeDivergence();
     // needs an even number of iterations
-    fastjacobi(-1, 0.25, 16);
+    fastjacobi(-1, 0.25, 8);
     //advect(u1x, u1y, p0, p1);
     //velocityField0 = diffuse(velocityField1, pressureField);
     //pressureField = recomputePressure(velocityField0);

@@ -8,7 +8,7 @@ PImage img;
 boolean debug = false;
 boolean printVelocities = false;
 
-int N = 640; // dimension of grid
+int N = 320; // dimension of grid
 double h; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
@@ -29,7 +29,7 @@ final double epsilon = 1.0e-20;
 boolean DRAW_VELOCITY_FIELD = false;
 
 void setup() {
-  size(640, 640, P3D);
+  size(320, 320, P3D);
   
   output = createWriter("debug.txt");
   grid = new FluidSolver();
