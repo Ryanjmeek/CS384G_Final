@@ -21,7 +21,12 @@ class Grid {
   }
   
   void advect(){
-    theGrid[N/2][N/2] = new Cell(0.0, new PVector(0,-1), 23.0, 1.0, true); // source
+    if (FIRE){
+      theGrid[N/2][N/2] = new Cell(0.0, new PVector(0,-1), 585.0, 1.0, true); // source
+    }
+    else {
+      theGrid[N/2][N/2] = new Cell(0.0, new PVector(0,-1), 23.0, 1.0, true); // source
+    }
     double[][] dens = new double[N][N];
     double[][] temp = new double[N][N];
     PVector[][] vel = new PVector[N][N];
@@ -119,7 +124,7 @@ class Grid {
   }
   
     private void advectTemperature(int i, int j, double[][] temp){
-      if (theGrid[i][j].isASource()){return;}
+      //if (theGrid[i][j].isASource()){return;}
       float x_prev = i - theGrid[i][j].velocity.x*delta;
       float y_prev = j - theGrid[i][j].velocity.y*delta;
       

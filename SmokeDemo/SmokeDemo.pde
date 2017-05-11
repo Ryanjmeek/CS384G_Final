@@ -4,8 +4,10 @@ Grid grid;
 PrintWriter output;
 
 PImage img;
+PImage whiteImg;
+PImage sparkImg;
 
-int N = 120; // dimension of grid
+int N = 130; // dimension of grid
 double h; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
@@ -18,12 +20,13 @@ double densityTolerance = 0.001;
 double pressureTolerance = 0.001;
 
 final double ambientTemp = 23;
-final double alpha = 0.0005;
-final double beta = 0.005;
+double alpha = 0.0005;
+double beta = 0.005;
 final double epsilon = 1.0e-20;
 final double zeta = 0.1;
 
 boolean DRAW_VELOCITY_FIELD = false;
+boolean FIRE = true;
 
 void setup() {
   size(640, 640, P3D);
@@ -32,8 +35,17 @@ void setup() {
   
   img = loadImage("smokealpha.png");
   img.resize(50, 0);
-  //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
-  //output = createWriter("debug.txt");
+  whiteImg = loadImage("whitealpha.png");
+  whiteImg.resize(25, 0);
+  sparkImg = loadImage("whitealpha.png");
+  sparkImg.resize(30, 0);
+
+  if (FIRE) {
+    alpha = 0.00005;
+    beta = 0.001;
+  }
+  
+  output = createWriter("debug.txt");
 
   h = (double)width / (double)N;
   
@@ -65,7 +77,13 @@ void draw() {
 
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density*0.9);
+      if (FIRE) {
+        drawFireySmokeAt(img, whiteImg, sparkImg, i, j, 255*grid.getCell(i,j).density*0.9, grid.getCell(i,j).temperature);
+        //output.println("i: " + i + ", j: " + j + " temperature: " + grid.getCell(i,j).temperature);
+      }
+      else { // SMOKE
+        drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density*0.9);
+      }
     }
   }
   
@@ -85,6 +103,24 @@ void drawSmokeAt(PImage image, int i, int j, double density){
   tint(255, (float)density);
   imageMode(CENTER);
   image(image, (float)h*i, (float)h*j);
+}
+
+void drawFireySmokeAt(PImage image, PImage whiteImage, PImage sparkImage, int i, int j, double density, double temperature){
+  if (temperature < 80){
+    tint(255, (float)density);
+    imageMode(CENTER);
+    image(image, (float)h*i, (float)h*j);
+  }
+  else if (temperature < 550) {
+    tint(
+    (float)random( (float) (255-(255*(temperature/585.0))) - 10 , (float) (255-(255*(temperature/585.0))) + 10 ), 
+    (float)random( (float) (115-(115*(temperature/585.0))) - 10 , (float) (115-(115*(temperature/585.0))) + 10 ) , 
+    10, 
+    (float)density);
+    
+    imageMode(CENTER);
+    image(whiteImage, (float)h*i, (float)h*j);
+  }
 }
 
 // Renders a vector object 'v' as an arrow and a position 'loc'
