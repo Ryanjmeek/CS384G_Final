@@ -53,22 +53,22 @@ void draw() {
   if (DRAW_VELOCITY_FIELD){
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        if (grid.getCell(i,j).density > densityTolerance){
-          stroke((float)grid.getCell(i,j).pressure, 0, 0);
+        if (grid.getCell(i,j).density[grid.oldVelocity] > densityTolerance){
+          stroke((float)grid.getCell(i,j).pressure[grid.oldPressure], 0, 0);
         }
         else {
           stroke(255, 255, 255);
         }
         if(printVelocities) output.println("in draw and cell i: " + i + ", j: " + j + ", velocity.x" 
-                                    + grid.getCell(i,j).velocity.x + ", velocity.y" + grid.getCell(i,j).velocity.y);
-        drawVector((new PVector(grid.getCell(i,j).velocity.x, grid.getCell(i,j).velocity.y)).normalize(), new PVector((float)((i+0.5)*h),(float)((j+0.5)*h)), 0.1);
+                                    + grid.getCell(i,j).velocity[grid.oldVelocity].x + ", velocity.y" + grid.getCell(i,j).velocity[grid.oldVelocity].y);
+        drawVector((new PVector(grid.getCell(i,j).velocity[grid.oldVelocity].x, grid.getCell(i,j).velocity[grid.oldVelocity].y)).normalize(), new PVector((float)((i+0.5)*h),(float)((j+0.5)*h)), 0.1);
       }
     }
   }
 
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density);
+      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density[grid.oldVelocity]);
     }
   }
   
@@ -78,6 +78,9 @@ void draw() {
     grid.project();
     output.flush();
   }
+  int swap = grid.oldVelocity;
+  grid.oldVelocity = grid.newVelocity;
+  grid.newVelocity = swap;
   
   lastTime = millis();
   //println(delta);
