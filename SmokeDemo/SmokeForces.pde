@@ -2,7 +2,7 @@ class SmokeForces{
   FluidSolver parent;
   static final float alpha = 0.00001;
   static final float beta = 0.0005;
-  static final float zeta = 1;
+  static final float zeta = 1.0;
   float[][] omega;
   
   
@@ -19,6 +19,7 @@ class SmokeForces{
           this.applyBouyancy(i,j);
           this.setOmega(i,j);
           this.applyVorticity(i,j);
+          
         }
       }
     }
