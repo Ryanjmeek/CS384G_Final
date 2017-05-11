@@ -212,18 +212,26 @@ class Grid {
   
   double doIteration(double[][] divergence, double[][][] coeffs, int iter){
     double maxDiff = 0;
+    double[][] pressures = new double[N][N];
+    for(int i = 0; i < N; i++){
+      for(int j = 0; j < N; j++){
+        pressures[i][j] = getCell(i,j).pressure;
+      }
+    }
+    
     for(int i = 0; i < N; i++){
       for(int j = 0; j < N; j++){
         Cell myCell = getCell(i,j);
-        Cell left = getCell(i - 2, j);
-        Cell right = getCell(i + 2, j);
-        Cell top = getCell(i, j - 2);
-        Cell bot = getCell(i, j + 2);
-        double pressureOld = iter == 0 ? 0.0 : myCell.pressure;
-        double pressureLeft = iter == 0 ? 0.0 : left.pressure;
-        double pressureRight = iter == 0 ? 0.0 : right.pressure;
-        double pressureTop = iter == 0 ? 0.0 : top.pressure;
-        double pressureBot = iter == 0 ? 0.0 : bot.pressure;
+        //Cell left = getCell(i - 2, j);
+        //Cell right = getCell(i + 2, j);
+        //Cell top = getCell(i, j - 2);
+        //Cell bot = getCell(i, j + 2);
+        if (i-2 < 0 || i+2 > N-1 || j-2 < 0 || j+2 > N-1){ continue; }
+        double pressureOld = iter == 0 ? 0.0 : pressures[i][j];
+        double pressureLeft = iter == 0 ? 0.0 : pressures[i-2][j];
+        double pressureRight = iter == 0 ? 0.0 : pressures[i+2][j];
+        double pressureTop = iter == 0 ? 0.0 : pressures[i][j-2];
+        double pressureBot = iter == 0 ? 0.0 : pressures[i][j+2];
         double pressureNew = coeffs[i][j][0]*divergence[i][j] + coeffs[i][j][1]*pressureLeft + coeffs[i][j][2]*pressureRight
           + coeffs[i][j][3]*pressureTop + coeffs[i][j][4]*pressureBot;
         double diff = (double) abs((float) (pressureNew - pressureOld));
@@ -235,23 +243,23 @@ class Grid {
     return maxDiff;
   }
   
-  void doIterationNew(double[][] divergence) {
-    for(int i = 0; i < N; i++){
-      for(int j = 0; j < N; j++){
-        Cell myCell = getCell(i,j);
-        Cell left = getCell(i - 2, j);
-        Cell right = getCell(i + 2, j);
-        Cell top = getCell(i, j - 2);
-        Cell bot = getCell(i, j + 2);
-        double pressureLeft = left.pressure;
-        double pressureRight = right.pressure;
-        double pressureTop = top.pressure;
-        double pressureBot = bot.pressure;
-        myCell.pressure = 0.25 * (divergence[i][j] + pressureLeft + pressureRight + pressureTop + pressureBot);
-        //output.println("in doIteration and this is i: " + i + ", j: " + j + ", pressureNew: " + pressureNew);                      
-      }
-    }
-  }
+  //void doIterationNew(double[][] divergence) {
+  //  for(int i = 0; i < N; i++){
+  //    for(int j = 0; j < N; j++){
+  //      Cell myCell = getCell(i,j);
+  //      Cell left = getCell(i - 2, j);
+  //      Cell right = getCell(i + 2, j);
+  //      Cell top = getCell(i, j - 2);
+  //      Cell bot = getCell(i, j + 2);
+  //      double pressureLeft = left.pressure;
+  //      double pressureRight = right.pressure;
+  //      double pressureTop = top.pressure;
+  //      double pressureBot = bot.pressure;
+  //      myCell.pressure = 0.25 * (divergence[i][j] + pressureLeft + pressureRight + pressureTop + pressureBot);
+  //      //output.println("in doIteration and this is i: " + i + ", j: " + j + ", pressureNew: " + pressureNew);                      
+  //    }
+  //  }
+  //}
   
   void updateVelocities(){
     for(int i = 0; i < N; i++){
@@ -270,8 +278,8 @@ class Grid {
         double pressureRight = right.pressure;
         double pressureTop = top.pressure;
         double pressureBot = bot.pressure;
-        myCell.velocity.x = myCell.velocity.x - .5 * delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
-        myCell.velocity.y = myCell.velocity.y + .5 * delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
+        myCell.velocity.x = myCell.velocity.x - 0.5*delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
+        myCell.velocity.y = myCell.velocity.y + 0.5*delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
         //output.println("in updateVelocities and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
       }
     }

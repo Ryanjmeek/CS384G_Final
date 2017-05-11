@@ -18,8 +18,8 @@ double densityTolerance = 0.001;
 double pressureTolerance = 0.001;
 
 final double ambientTemp = 23;
-final double alpha = .0005;
-final double beta = 500;
+final double alpha = 0.0005;
+final double beta = 0.005;
 final double epsilon = 1.0e-20;
 final double zeta = 0.1;
 
@@ -43,7 +43,7 @@ void draw() {
   //// 3D camera
   ////camera(mouseX, height/2, (height/2) / tan(PI/6), width/2, height/2, 0, 0, 1, 0);
   //delta = (millis() - lastTime)/10.0;
-  delta = 2;
+  delta = 0.95;
   if(delta < epsilon) return;
   background(0);
   
@@ -65,7 +65,7 @@ void draw() {
 
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density);
+      drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density*0.9);
     }
   }
   
