@@ -27,11 +27,7 @@ class FluidSolver {
     advectVelocity(timeStep);
     addMouseForce();
     computeDivergence();
-    // needs an even number of iterations
-    fastjacobi(-1, 0.25, 8);
-    //advect(u1x, u1y, p0, p1);
-    //velocityField0 = diffuse(velocityField1, pressureField);
-    //pressureField = recomputePressure(velocityField0);
+    fastJacobi(-1, 0.25, 8);
     subtractPressureGradient();
     int swap = newVals;
     newVals = curVals;
@@ -132,8 +128,7 @@ class FluidSolver {
   
   void computeDivergence(){
     for(int y = 1; y < N-1; y++) {
-        for(int x = 1; x < N-1; x++) {
-            // compute divergence using central difference     
+        for(int x = 1; x < N-1; x++) {  
             float x0 = getCell(x-1,y).vx[newVals];
             float x1 = getCell(x+1,y).vx[newVals];
             float y0 = getCell(x,y-1).vy[newVals];
@@ -143,11 +138,7 @@ class FluidSolver {
     }
   }
   
-  void fastjacobi(float alpha, float beta, int iterations){
-      //for(var i = 0; i < pressureField0.length; i++) {
-          //pressureField0[i] = 0.5;
-          //pressureField1[i] = pressureField0[i];
-      //}
+  void fastJacobi(float alpha, float beta, int iterations){
       for(int y = 0; y < N; y++) {
         for(int x = 0; x < N; x++) {
             theGrid[x][y].pressure[0] = 0;
