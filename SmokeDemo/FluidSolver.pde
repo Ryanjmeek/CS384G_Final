@@ -22,10 +22,12 @@ class FluidSolver {
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
         if(isSmoke(i,j)){
-          theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
+          //theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
+          theGrid[i][j] = new FluidCell(0,-0.05, 1);
         }
         else{
-          theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0));
+          //theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
+          theGrid[i][j] = new FluidCell(0,-0.05);
         }
       }
     }

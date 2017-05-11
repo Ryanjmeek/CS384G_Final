@@ -12,8 +12,8 @@ class SmokeForces{
   }
  
   void addSmokeForces() {
-    for(int i = 0; i < N; i++) {
-      for(int j = 0; j < N; j++) {
+    for(int i = 0; i < N-1; i++) {
+      for(int j = 0; j < N-1; j++) {
         if(parent.theGrid[i][j].density[parent.newVals] > densityTolerance) {
           this.applyGravity(i,j);
           this.applyBouyancy(i,j);
@@ -43,7 +43,7 @@ class SmokeForces{
     float vel2 = (i-1 >= 0) ? parent.theGrid[i-1][j].vy[parent.newVals] : parent.theGrid[i][j].vy[parent.newVals];
     float vel3 = (j+1 < N) ? parent.theGrid[i][j+1].vx[parent.newVals] : parent.theGrid[i][j].vx[parent.newVals];
     float vel4 = (j-1 >= 0) ? parent.theGrid[i][j-1].vx[parent.newVals] : parent.theGrid[i][j].vx[parent.newVals];
-    float omegaVal = (vel1 - vel2)/(2*h) - (vel3 - vel4)/(2*h);
+    float omegaVal =  (vel1 - vel2)/(2*h) - (vel3 - vel4)/(2*h);
     omega[i][j] = omegaVal;
   }
   
