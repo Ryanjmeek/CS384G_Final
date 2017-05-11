@@ -14,7 +14,7 @@ class SmokeForces{
   void addSmokeForces() {
     for(int i = 0; i < N-1; i++) {
       for(int j = 0; j < N-1; j++) {
-        if(parent.theGrid[i][j].density[parent.newVals] > densityTolerance) {
+        if(parent.theGrid[i][j].density[parent.curVals] > densityTolerance) {
           this.applyGravity(i,j);
           this.applyBouyancy(i,j);
           this.setOmega(i,j);
@@ -31,18 +31,18 @@ class SmokeForces{
   }
   
   private void applyBouyancy(int i, int j) {
-    PVector bouyancy = new PVector(0.0, (float)(alpha * parent.theGrid[i][j].density[parent.newVals]
-      + -beta * (parent.theGrid[i][j].temperature[parent.newVals] - FluidCell.AMBIENT_TEMP)));
+    PVector bouyancy = new PVector(0.0, (float)(alpha * parent.theGrid[i][j].density[parent.curVals]
+      + -beta * (parent.theGrid[i][j].temperature[parent.curVals] - FluidCell.AMBIENT_TEMP)));
     parent.theGrid[i][j].vx[parent.newVals] += bouyancy.x;
     parent.theGrid[i][j].vy[parent.newVals] += bouyancy.y;
   }
   
   
   private void setOmega(int i, int j) {
-    float vel1 = (i+1 < N) ? parent.theGrid[i+1][j].vy[parent.newVals] : parent.theGrid[i][j].vy[parent.newVals];
-    float vel2 = (i-1 >= 0) ? parent.theGrid[i-1][j].vy[parent.newVals] : parent.theGrid[i][j].vy[parent.newVals];
-    float vel3 = (j+1 < N) ? parent.theGrid[i][j+1].vx[parent.newVals] : parent.theGrid[i][j].vx[parent.newVals];
-    float vel4 = (j-1 >= 0) ? parent.theGrid[i][j-1].vx[parent.newVals] : parent.theGrid[i][j].vx[parent.newVals];
+    float vel1 = (i+1 < N) ? parent.theGrid[i+1][j].vy[parent.curVals] : parent.theGrid[i][j].vy[parent.curVals];
+    float vel2 = (i-1 >= 0) ? parent.theGrid[i-1][j].vy[parent.curVals] : parent.theGrid[i][j].vy[parent.curVals];
+    float vel3 = (j+1 < N) ? parent.theGrid[i][j+1].vx[parent.curVals] : parent.theGrid[i][j].vx[parent.curVals];
+    float vel4 = (j-1 >= 0) ? parent.theGrid[i][j-1].vx[parent.curVals] : parent.theGrid[i][j].vx[parent.curVals];
     float omegaVal =  (vel1 - vel2)/(2*h) - (vel3 - vel4)/(2*h);
     omega[i][j] = omegaVal;
   }
