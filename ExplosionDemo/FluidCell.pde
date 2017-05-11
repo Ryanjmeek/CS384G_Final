@@ -6,7 +6,7 @@ class FluidCell {
   float[] density;
   float[] temperature;
   static final float AMBIENT_TEMP = 23.0;
-  static final float SMOKE_TEMP = 150;
+  static final float SMOKE_TEMP = 1000;
   static final float SMOKE_DENSITY = 4.0;
   
   FluidCell(float vx, float vy){

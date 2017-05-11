@@ -39,8 +39,8 @@ class FluidSolver {
         int differenceX = BOMB_END_X - BOMB_START_X;
         int differenceY = BOMB_END_Y - BOMB_START_Y;
         theGrid[i][j] = new FluidCell(0,0,1);
-        theGrid[i][j].temperature[0] = 1000;
-        theGrid[i][j].temperature[1] = 1000;
+        theGrid[i][j].temperature[0] = 5000;
+        theGrid[i][j].temperature[1] = 5000;
         theGrid[i][j].density[0] = 5000;
         theGrid[i][j].density[1] = 5000;
         theGrid[i][j].vx[0] = 100 * (i - BOMB_START_X - (differenceX / 2));
