@@ -1,10 +1,14 @@
 class SmokeForces{
   FluidSolver parent;
-  static final double alpha = 0.00001;
-  static final double beta = 0.0001;
+  static final float alpha = 0.00001;
+  static final float beta = 0.0001;
+  static final float zeta = 1;
+  float[][] omega;
+  
   
   SmokeForces(FluidSolver p){
     parent = p;
+    omega = new float[N][N];
   }
  
   void addSmokeForces() {
@@ -13,8 +17,8 @@ class SmokeForces{
         if(parent.theGrid[i][j].density[parent.newVals] > densityTolerance) {
           this.applyGravity(i,j);
           this.applyBouyancy(i,j);
-          //this.setOmega(i,j);
-          //this.applyVorticity(i,j);
+          this.setOmega(i,j);
+          this.applyVorticity(i,j);
         }
       }
     }
@@ -33,32 +37,32 @@ class SmokeForces{
     parent.theGrid[i][j].vy[parent.newVals] += bouyancy.y;
   }
   
-  /*
+  
   private void setOmega(int i, int j) {
-    double vel1 = (i+1 < N) ? theGrid[i+1][j].velocity.y : theGrid[i][j].velocity.y;
-    double vel2 = (i-1 >= 0) ? theGrid[i-1][j].velocity.y : theGrid[i][j].velocity.y;
-    double vel3 = (j+1 < N) ? theGrid[i][j+1].velocity.x : theGrid[i][j].velocity.x;
-    double vel4 = (j-1 >= 0) ? theGrid[i][j-1].velocity.x : theGrid[i][j].velocity.x;
-    double omega = (vel1 - vel2)/(2*h) - (vel3 - vel4)/(2*h);
-    theGrid[i][j].omega = omega;
+    float vel1 = (i+1 < N) ? parent.theGrid[i+1][j].vy[parent.newVals] : parent.theGrid[i][j].vy[parent.newVals];
+    float vel2 = (i-1 >= 0) ? parent.theGrid[i-1][j].vy[parent.newVals] : parent.theGrid[i][j].vy[parent.newVals];
+    float vel3 = (j+1 < N) ? parent.theGrid[i][j+1].vx[parent.newVals] : parent.theGrid[i][j].vx[parent.newVals];
+    float vel4 = (j-1 >= 0) ? parent.theGrid[i][j-1].vx[parent.newVals] : parent.theGrid[i][j].vx[parent.newVals];
+    float omegaVal = (vel1 - vel2)/(2*h) - (vel3 - vel4)/(2*h);
+    omega[i][j] = omegaVal;
   }
   
   private void applyVorticity(int i, int j) {
-    double omega1 = (i+1 < N) ? theGrid[i+1][j].omega : theGrid[i][j].omega;
-    double omega2 = (i-1 >= 0) ? theGrid[i-1][j].omega : theGrid[i][j].omega;
-    double omega3 = (j+1 < N) ? theGrid[i][j+1].omega : theGrid[i][j].omega;
-    double omega4 = (j-1 >= 0) ? theGrid[i][j-1].omega : theGrid[i][j].omega;
-    double omegaDivX = (omega1 - omega2)/(2*h);
-    double omegaDivY = (omega3 - omega4)/(2*h);
-    PVector omegaDiv = new PVector((float)omegaDivX, (float)omegaDivY);
-    PVector N = new PVector((float)(omegaDiv.x / (omegaDiv.mag() + epsilon)),
+    float omega1 = (i+1 < N) ? omega[i+1][j] : omega[i][j];
+    float omega2 = (i-1 >= 0) ? omega[i-1][j] : omega[i][j];
+    float omega3 = (j+1 < N) ? omega[i][j+1] : omega[i][j];
+    float omega4 = (j-1 >= 0) ? omega[i][j-1] : omega[i][j];
+    float omegaDivX = (omega1 - omega2)/(2*h);
+    float omegaDivY = (omega3 - omega4)/(2*h);
+    PVector omegaDiv = new PVector(omegaDivX, omegaDivY);
+    PVector N1 = new PVector((float)(omegaDiv.x / (omegaDiv.mag() + epsilon)),
       (float)(omegaDiv.y / (omegaDiv.mag() + epsilon)));
     // We flip the y because of the grid
-    double confX = (-theGrid[i][j].omega * N.y) * h * zeta;
-    double confY = (theGrid[i][j].omega * N.x) * h * zeta;
-    theGrid[i][j].velocity.x += confX;
-    theGrid[i][j].velocity.y += confY;
+    float confX = (-omega[i][j] * N1.y) * h * zeta;
+    float confY = (omega[i][j] * N1.x) * h * zeta;
+    parent.theGrid[i][j].vx[parent.newVals] += confX;
+    parent.theGrid[i][j].vy[parent.newVals] += confY;
   }
-  */
+  
   
 }

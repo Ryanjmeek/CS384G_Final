@@ -9,7 +9,7 @@ boolean debug = false;
 boolean printVelocities = false;
 
 static final int N = 320; // dimension of grid
-double h; // size of each voxel
+float h = 1; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
@@ -36,7 +36,7 @@ void setup() {
   img.resize(50, 0);
   //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
 
-  h = (double)width / (double)N;
+  //h = (float)width / (float)N;
   output.println("This is h: " + h);
   
 }
