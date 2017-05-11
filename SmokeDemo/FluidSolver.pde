@@ -1,12 +1,17 @@
 class FluidSolver {
   FluidCell[][] theGrid = new FluidCell[N][N];
+  SmokeForces smoke;
   int newPressure;
   int oldPressure;
   int newVals;
   int curVals;
   float lastMouseX;
   float lastMouseY;
-  static final float timeStep = 1.0;
+  static final float TIME_STEP = 1.0;
+  static final float SMOKE_START_X = ((N/2) - 20);
+  static final float SMOKE_END_X = ((N/2) + 20);
+  static final float SMOKE_START_Y = ((N/2) - 20);
+  static final float SMOKE_END_Y = ((N/2) + 20);
 
   FluidSolver(){
     //TODO
@@ -14,21 +19,35 @@ class FluidSolver {
     oldPressure = 0;
     newVals = 0;
     curVals = 1;
+    smoke = new SmokeForces(this); 
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0));
+        if(isSmoke(i,j)){
+          theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
+        }
+        else{
+          theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0));
+        }
       }
     }
     
   }
   
+  boolean isSmoke(int i, int j){
+    if(i > SMOKE_START_X && i < SMOKE_END_X && j > SMOKE_START_Y && j < SMOKE_END_Y){
+      return true;
+    }
+    return false;
+    
+  }
+  
   void simulate(){
     velocityBoundary();
-    advectVelocity(timeStep);
-    addMouseForce();
+    advect(TIME_STEP);
+    smoke.addSmokeForces();
     computeDivergence();
     // needs an even number of iterations
-    fastjacobi(-1, 0.25, 8);
+    fastJacobi(-1, 0.25, 8);
     //advect(u1x, u1y, p0, p1);
     //velocityField0 = diffuse(velocityField1, pressureField);
     //pressureField = recomputePressure(velocityField0);
@@ -49,6 +68,7 @@ class FluidSolver {
     myCell.vx[newVals] = myCell.vx[newVals] + dx*2;
     myCell.vy[newVals] = myCell.vy[newVals] + dy*2;
   }
+  
   
   void velocityBoundary(){
     for(int x = 0; x < N; x++) {        
@@ -111,7 +131,31 @@ class FluidSolver {
       return lerp(lerp(p00, p10, x-x0), lerp(p01, p11, x-x0), y-y0);
   }
   
-  void advectVelocity(float t){
+  float bilerpDensity(float x, float y) {
+      int x0 = floor(x);
+      int y0 = floor(y);
+      int x1 = x0+1;
+      int y1 = y0+1;
+      float p00 = getCell(x0,y0).density[curVals];
+      float p01 = getCell(x0,y1).density[curVals];
+      float p10 = getCell(x1,y0).density[curVals];
+      float p11 = getCell(x1,y1).density[curVals];
+      return lerp(lerp(p00, p10, x-x0), lerp(p01, p11, x-x0), y-y0);
+  }
+  
+  float bilerpTemp(float x, float y) {
+      int x0 = floor(x);
+      int y0 = floor(y);
+      int x1 = x0+1;
+      int y1 = y0+1;
+      float p00 = getCell(x0,y0).temperature[curVals];
+      float p01 = getCell(x0,y1).temperature[curVals];
+      float p10 = getCell(x1,y0).temperature[curVals];
+      float p11 = getCell(x1,y1).temperature[curVals];
+      return lerp(lerp(p00, p10, x-x0), lerp(p01, p11, x-x0), y-y0);
+  }
+  
+  void advect(float t){
     for(int y = 1; y < N-1; y++) {
         for(int x = 1; x < N-1; x++) {
             FluidCell myCell = getCell(x,y);
@@ -121,6 +165,9 @@ class FluidSolver {
             //TODO this might need to be a x +vx instead of x-vx
             myCell.vx[newVals] = bilerpVelocityX(x-vx,y-vy);
             myCell.vy[newVals] = bilerpVelocityY(x-vx,y-vy);
+            
+            myCell.density[newVals] = bilerpDensity(x-vx,y-vy);
+            myCell.temperature[newVals] = bilerpTemp(x-vx,y-vy);
         }
     }
   }
@@ -143,7 +190,7 @@ class FluidSolver {
     }
   }
   
-  void fastjacobi(float alpha, float beta, int iterations){
+  void fastJacobi(float alpha, float beta, int iterations){
       //for(var i = 0; i < pressureField0.length; i++) {
           //pressureField0[i] = 0.5;
           //pressureField1[i] = pressureField0[i];
