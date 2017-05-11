@@ -47,19 +47,19 @@ void draw() {
       }*/
       //pixels[loc] = color(myCell.density[grid.newVals]*128, 
               //myCell.density[grid.newVals]*128, myCell.density[grid.newVals]*128);
-      if (myCell.temperature[grid.newVals] < 350){
+      if (myCell.temperature[grid.newVals] < 300){
         pixels[loc] = color( myCell.density[grid.newVals]*64, 
                              myCell.density[grid.newVals]*64, 
                              myCell.density[grid.newVals]*64);
       }
-      else if (myCell.temperature[grid.newVals] < 400) {
+      else if (myCell.temperature[grid.newVals] < 480) {
         pixels[loc] = color( random( (float) (255-(255*(myCell.temperature[grid.newVals]/FluidCell.SMOKE_TEMP))) - 10 , (float) (255-(255*(myCell.temperature[grid.newVals]/FluidCell.SMOKE_TEMP))) + 10 ) * myCell.density[grid.newVals], 
                             random( (float) (115-(115*(myCell.temperature[grid.newVals]/FluidCell.SMOKE_TEMP))) - 10 , (float) (115-(115*(myCell.temperature[grid.newVals]/FluidCell.SMOKE_TEMP))) + 10 ) * myCell.density[grid.newVals], 
                             10);
       }
       else {
         pixels[loc] = color( random( 255 - 10 , 255 + 10 ) * myCell.density[grid.newVals], 
-                            random( (float) (215-(215*(myCell.temperature[grid.newVals]/FluidCell.SMOKE_TEMP))) - 10 , (float) (215-(215*(myCell.temperature[grid.newVals]/FluidCell.SMOKE_TEMP))) + 10 ) * myCell.density[grid.newVals], 
+                            random( (float) ((215*(myCell.temperature[grid.newVals]/FluidCell.SMOKE_TEMP))) - 10 , (float) ((215*(myCell.temperature[grid.newVals]/FluidCell.SMOKE_TEMP))) + 10 ) * myCell.density[grid.newVals], 
                             0);
       }
       //pixels[loc] = color(myCell.pressure[grid.newPressure]*555, myCell.vx[grid.newVals]*128+128, myCell.vy[grid.newVals]*128+128);
