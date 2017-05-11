@@ -52,6 +52,7 @@ void draw() {
       int loc = y*N + x;
       FluidCell myCell = grid.getCell(x,y);
       pixels[loc] = color(myCell.pressure[grid.newPressure]*555, myCell.vx[grid.newVals]*128+128, myCell.vy[grid.newVals]*128+128);
+      //pixels[loc] = color(myCell.pressure[grid.newPressure]*555, 0, 0);
     }
   }
   updatePixels();

@@ -6,7 +6,7 @@ class FluidSolver {
   int curVals;
   float lastMouseX;
   float lastMouseY;
-  static final float timeStep = 4.0;
+  static final float timeStep = 1.0;
 
   FluidSolver(){
     //TODO
