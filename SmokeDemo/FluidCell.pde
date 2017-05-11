@@ -7,7 +7,7 @@ class FluidCell {
   float[] temperature;
   static final float AMBIENT_TEMP = 23.0;
   static final float SMOKE_TEMP = 500.0;
-  static final float SMOKE_DENSITY = 2.0;
+  static final float SMOKE_DENSITY = 10.0;
   
   FluidCell(float vx, float vy){
     this.pressure = new float[2];

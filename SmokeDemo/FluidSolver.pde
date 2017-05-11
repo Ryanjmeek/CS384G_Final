@@ -40,7 +40,7 @@ class FluidSolver {
   void injectSmoke(){
     for(int i = SMOKE_START_X; i < SMOKE_END_X; i++){
       for(int j = SMOKE_START_Y; j < SMOKE_END_Y; j++){
-        theGrid[i][j] = new FluidCell(random(-10.0,10.0),-0.05, 1);
+        theGrid[i][j] = new FluidCell(random(-10.0,10.0),random(-10.0,0), 1);
         //theGrid[i][j] = new FluidCell(0,-0.05, 1);
       }  
     }
