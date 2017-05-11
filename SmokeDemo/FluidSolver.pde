@@ -46,8 +46,8 @@ class FluidSolver {
     lastMouseX = mouseX;
     lastMouseY = mouseY;
     FluidCell myCell = getCell(x,y);
-    myCell.vx[newVals] = myCell.vx[newVals] - dx*2;
-    myCell.vy[newVals] = myCell.vy[newVals] - dx*2;
+    myCell.vx[newVals] = myCell.vx[newVals] + dx*2;
+    myCell.vy[newVals] = myCell.vy[newVals] + dy*2;
   }
   
   void velocityBoundary(){
