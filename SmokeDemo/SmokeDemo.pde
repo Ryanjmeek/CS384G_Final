@@ -32,13 +32,6 @@ void setup() {
   output = createWriter("debug.txt");
   grid = new FluidSolver();
   
-  img = loadImage("smokealpha.png");
-  img.resize(50, 0);
-  //ps = new ParticleSystem(0, new PVector(width/2, height-60), img);
-
-  //h = (float)width / (float)N;
-  output.println("This is h: " + h);
-  
 }
 
 void draw() {
