@@ -14,7 +14,6 @@ class FluidSolver {
   static final float SMOKE_END_Y = ((N/2) + 20);
 
   FluidSolver(){
-    //TODO
     newPressure = 1;
     oldPressure = 0;
     newVals = 0;
@@ -88,7 +87,6 @@ class FluidSolver {
     
   }
   
-  //TODO
   FluidCell getCell(int x, int y){
     x = (x < 0 ? 0 : (x > N-1 ? N-1 : x))|0;
     y = (y < 0 ? 0 : (y > N-1 ? N-1 : y))|0;
@@ -100,7 +98,6 @@ class FluidSolver {
   
   float lerp(float a, float b, float c){
     c = c < 0 ? 0 : (c > 1 ? 1 : c);
-    //c = clamp(c, 0, 1);
     return a * (1 - c) + b * c;
   }
   
@@ -159,7 +156,7 @@ class FluidSolver {
             float vx = myCell.vx[curVals]*t;
             float vy = myCell.vy[curVals]*t;
             
-            //TODO this might need to be a x +vx instead of x-vx
+            //this might need to be a x +vx instead of x-vx
             myCell.vx[newVals] = bilerpVelocityX(x-vx,y-vy);
             myCell.vy[newVals] = bilerpVelocityY(x-vx,y-vy);
             
@@ -188,10 +185,6 @@ class FluidSolver {
   }
   
   void fastJacobi(float alpha, float beta, int iterations){
-      //for(var i = 0; i < pressureField0.length; i++) {
-          //pressureField0[i] = 0.5;
-          //pressureField1[i] = pressureField0[i];
-      //}
       for(int y = 0; y < N; y++) {
         for(int x = 0; x < N; x++) {
             theGrid[x][y].pressure[0] = 0;
