@@ -6,8 +6,8 @@ class FluidCell {
   float[] density;
   float[] temperature;
   static final float AMBIENT_TEMP = 23.0;
-  static final float SMOKE_TEMP = 500.0;
-  static final float SMOKE_DENSITY = 10.0;
+  static final float SMOKE_TEMP = 150;
+  static final float SMOKE_DENSITY = 4.0;
   
   FluidCell(float vx, float vy){
     this.pressure = new float[2];
@@ -36,8 +36,8 @@ class FluidCell {
     this.vx[1] = vx;
     this.vy[0] = vy;
     this.vy[1] = vy;
-    this.density[0] = SMOKE_DENSITY;
-    this.density[1] = SMOKE_DENSITY;
+    this.density[0] = random(SMOKE_DENSITY/2, SMOKE_DENSITY);
+    this.density[1] = random(SMOKE_DENSITY/2, SMOKE_DENSITY);
     this.temperature[0] = SMOKE_TEMP;
     this.temperature[1] = SMOKE_TEMP;
   }
