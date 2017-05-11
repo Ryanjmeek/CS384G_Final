@@ -12,6 +12,13 @@ class FluidSolver {
   static final int SMOKE_END_X = ((N/2) + 20);
   static final int SMOKE_START_Y = (N - 6);
   static final int SMOKE_END_Y = (N - 1);
+  
+  static final int BOMB_START_X = 150;
+  static final int BOMB_END_X = 170;
+  static final int BOMB_START_Y = 150;
+  static final int BOMB_END_Y = 170;
+  
+  int count = 0;
 
   FluidSolver(){
     newPressure = 1;
@@ -20,13 +27,28 @@ class FluidSolver {
     curVals = 1;
     smoke = new SmokeForces(this); 
     for (int i = 0; i < N; i++){
-      for (int j = 0; j < N; j++){        
-          //theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
-          theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0));
-          //theGrid[i][j] = new FluidCell(0,-0.05);
+      for (int j = 0; j < N; j++){
+        theGrid[i][j] = new FluidCell(random(-1,1),random(-1,1));
       }
     }
-    
+  }
+  
+  void createBomb() {
+    for(int i = BOMB_START_X; i < BOMB_END_X; i++) {
+      for(int j = BOMB_START_Y; j < BOMB_END_Y; j++) {
+        int differenceX = BOMB_END_X - BOMB_START_X;
+        int differenceY = BOMB_END_Y - BOMB_START_Y;
+        theGrid[i][j] = new FluidCell(0,0,1);
+        theGrid[i][j].temperature[0] = 1000;
+        theGrid[i][j].temperature[1] = 1000;
+        theGrid[i][j].density[0] = 5000;
+        theGrid[i][j].density[1] = 5000;
+        theGrid[i][j].vx[0] = 100 * (i - BOMB_START_X - (differenceX / 2));
+        theGrid[i][j].vx[1] = 100 * (i - BOMB_START_X - (differenceX / 2));
+        theGrid[i][j].vy[0] = 100 * (j - BOMB_START_Y - (differenceY / 2));
+        theGrid[i][j].vy[1] = 100 * (j - BOMB_START_Y - (differenceY / 2));
+      }
+    }
   }
   
   boolean isSmoke(int i, int j){
@@ -37,20 +59,13 @@ class FluidSolver {
     
   }
   
-  void injectSmoke(){
-    for(int i = SMOKE_START_X; i < SMOKE_END_X; i++){
-      for(int j = SMOKE_START_Y; j < SMOKE_END_Y; j++){
-        theGrid[i][j] = new FluidCell(random(-10.0,10.0),random(-10.0,0), 1);
-        //theGrid[i][j] = new FluidCell(0,-0.05, 1);
-      }  
-    }
-  }
-  
   void simulate(){
-    injectSmoke();
+    if(count < 1) {
+      createBomb();
+      count++;
+    }
     velocityBoundary();
     advect(TIME_STEP);
-    //addMouseForce();
     smoke.addSmokeForces();
     computeDivergence();
     fastJacobi(-1, 0.25, 8);
