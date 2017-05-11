@@ -51,6 +51,7 @@ void draw() {
       FluidCell myCell = grid.getCell(x,y);
       pixels[loc] = color(myCell.density[grid.newVals]*128, 
               myCell.density[grid.newVals]*128, myCell.density[grid.newVals]*128);
+      //pixels[loc] = color(myCell.pressure[grid.newPressure]*555, myCell.vx[grid.newVals]*128+128, myCell.vy[grid.newVals]*128+128);
       //pixels[loc] = color(myCell.pressure[grid.newPressure]*555, 0, 0);
     }
   }

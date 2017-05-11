@@ -44,13 +44,10 @@ class FluidSolver {
   void simulate(){
     velocityBoundary();
     advect(TIME_STEP);
+    //addMouseForce();
     smoke.addSmokeForces();
     computeDivergence();
-    // needs an even number of iterations
     fastJacobi(-1, 0.25, 8);
-    //advect(u1x, u1y, p0, p1);
-    //velocityField0 = diffuse(velocityField1, pressureField);
-    //pressureField = recomputePressure(velocityField0);
     subtractPressureGradient();
     int swap = newVals;
     newVals = curVals;
