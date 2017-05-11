@@ -49,10 +49,15 @@ void draw() {
     for(int x = 0; x < N; x++) {
       int loc = y*N + x;
       FluidCell myCell = grid.getCell(x,y);
-      pixels[loc] = color(myCell.density[grid.newVals]*128, 
-              myCell.density[grid.newVals]*128, myCell.density[grid.newVals]*128);
+      /*if(myCell.density[grid.newVals] > densityTolerance){
+        pixels[loc] = color(128,128,128);
+      }*/
+      //pixels[loc] = color(myCell.density[grid.newVals]*128, 
+              //myCell.density[grid.newVals]*128, myCell.density[grid.newVals]*128);
+      pixels[loc] = color(myCell.density[grid.newVals]*64, 
+              myCell.density[grid.newVals]*64, myCell.density[grid.newVals]*64);
       //pixels[loc] = color(myCell.pressure[grid.newPressure]*555, myCell.vx[grid.newVals]*128+128, myCell.vy[grid.newVals]*128+128);
-      //pixels[loc] = color(myCell.pressure[grid.newPressure]*555, 0, 0);
+      //pixels[loc] = color(myCell.pressure[grid.newPressure]*128 + 128, 0, 0);
       //pixels[loc] = color(0, myCell.vx[grid.newVals]*128+128, 0);
       //pixels[loc] = color(0, 0, myCell.vy[grid.newVals]*128+128);
     }

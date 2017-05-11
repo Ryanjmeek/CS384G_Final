@@ -8,8 +8,8 @@ class FluidSolver {
   float lastMouseX;
   float lastMouseY;
   static final float TIME_STEP = 1.0;
-  static final int SMOKE_START_X = ((N/2) - 10);
-  static final int SMOKE_END_X = ((N/2) + 10);
+  static final int SMOKE_START_X = ((N/2) - 20);
+  static final int SMOKE_END_X = ((N/2) + 20);
   static final int SMOKE_START_Y = (N - 6);
   static final int SMOKE_END_Y = (N - 1);
 
@@ -206,9 +206,6 @@ class FluidSolver {
         for(int y = 1; y < N-1; y++) {
             for(int x = 1; x < N-1; x++) {
                 FluidCell myCell = getCell(x,y);
-                if(myCell.density[curVals] < densityTolerance){
-                  myCell.pressure[newPressure] = 0.0;
-                }
                 float x0 = getCell(x-1,y).pressure[oldPressure];
                 float x1 = getCell(x+1,y).pressure[oldPressure];
                 float y0 = getCell(x,y-1).pressure[oldPressure];
