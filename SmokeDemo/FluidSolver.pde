@@ -23,6 +23,7 @@ class FluidSolver {
       for (int j = 0; j < N; j++){        
           //theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
           theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0));
+          //theGrid[i][j] = new FluidCell(0,-0.05);
       }
     }
     
@@ -40,6 +41,7 @@ class FluidSolver {
     for(int i = SMOKE_START_X; i < SMOKE_END_X; i++){
       for(int j = SMOKE_START_Y; j < SMOKE_END_Y; j++){
         theGrid[i][j] = new FluidCell(random(-10.0,10.0),-0.05, 1);
+        //theGrid[i][j] = new FluidCell(0,-0.05, 1);
       }  
     }
   }
@@ -203,11 +205,15 @@ class FluidSolver {
         oldPressure = swap;
         for(int y = 1; y < N-1; y++) {
             for(int x = 1; x < N-1; x++) {
+                FluidCell myCell = getCell(x,y);
+                if(myCell.density[curVals] < densityTolerance){
+                  myCell.pressure[newPressure] = 0.0;
+                }
                 float x0 = getCell(x-1,y).pressure[oldPressure];
                 float x1 = getCell(x+1,y).pressure[oldPressure];
                 float y0 = getCell(x,y-1).pressure[oldPressure];
                 float y1 = getCell(x,y+1).pressure[oldPressure];
-                getCell(x,y).pressure[newPressure] = (x0 + x1 + y0 + y1 + alpha * theGrid[x][y].divergence) * beta;
+                myCell.pressure[newPressure] = (x0 + x1 + y0 + y1 + alpha * theGrid[x][y].divergence) * beta;
             }
         }
       }
