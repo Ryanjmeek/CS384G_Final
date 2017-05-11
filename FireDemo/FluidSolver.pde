@@ -54,6 +54,7 @@ class FluidSolver {
     smoke.addSmokeForces();
     computeDivergence();
     fastJacobi(-1, 0.25, 8);
+    pressureBoundary();
     subtractPressureGradient();
     int swap = newVals;
     newVals = curVals;
@@ -90,9 +91,16 @@ class FluidSolver {
     }
   }
   
-  void pressureBoundary(){
-    
-  }
+   void pressureBoundary(){   
+     for(int x = 0; x < N; x++) {        
+         theGrid[x][0].pressure[newPressure] = theGrid[x][1].pressure[newPressure];        
+         theGrid[x][N-1].pressure[newPressure] = theGrid[x][N-2].pressure[newPressure];
+     }
+     for(int y = 0; y < N; y++) {
+         theGrid[0][y].pressure[newPressure] = theGrid[1][y].pressure[newPressure];
+         theGrid[N-1][y].pressure[newPressure] = theGrid[N-2][y].pressure[newPressure];
+     }
+   }
   
   FluidCell getCell(int x, int y){
     x = (x < 0 ? 0 : (x > N-1 ? N-1 : x))|0;
