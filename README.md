@@ -4,7 +4,11 @@ Realistic Smoke, Fire, and Explosion Simulations in Processing
 A real-time fluid solver implemented in Processing for simulating realistic particle effects for smoke, fire, and explosions.
 
 ## Background
-Jos Stam wrote a paper on how to create a Stable Fluid Solver. We implemented a stable fluid solver based on his paper and other articles found online. The solution we created follows the method of:
+
+
+## Implementation
+
+The solution we created follows the method of:
 
 1. advect()
 2. bodyForces()
