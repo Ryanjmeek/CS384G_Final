@@ -4,7 +4,9 @@ Realistic Smoke, Fire, and Explosion Simulations in Processing
 A real-time fluid solver implemented in Processing for simulating realistic particle effects for smoke, fire, and explosions.
 
 ## Background
+Top Level Psuedocode:
 
+<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/TopPsuedo.png" width="500" height="200">
 
 
 
