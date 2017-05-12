@@ -194,17 +194,17 @@ class FluidSolver {
     for(FluidCell cell: boundaryCells){
       int x = cell.x;
       int y = cell.y;
-      if(!getCell(x-1,y).solid){
-        cell.pressure[newPressure] = getCell(x-1,y).pressure[newPressure];
+      if(theGrid[x-1][y].solid){
+        cell.pressure[newPressure] = theGrid[x+1][y].pressure[newPressure];
       }
-      if(!getCell(x+1,y).solid){
-         cell.pressure[newPressure] = getCell(x+1,y).pressure[newPressure];
+      if(theGrid[x+1][y].solid){
+        cell.pressure[newPressure] = theGrid[x-1][y].pressure[newPressure];
       }
-      if(!getCell(x,y-1).solid){
-        cell.pressure[newPressure] = getCell(x,y-1).pressure[newPressure];
+      if(theGrid[x][y-1].solid){
+        cell.pressure[newPressure] = theGrid[x][y+1].pressure[newPressure];
       }
-      if(!getCell(x,y+1).solid){
-        cell.pressure[newPressure] = getCell(x,y+1).pressure[newPressure];
+      if(theGrid[x][y+1].solid){
+        cell.pressure[newPressure] = theGrid[x][y-1].pressure[newPressure];
       }
     }
   }

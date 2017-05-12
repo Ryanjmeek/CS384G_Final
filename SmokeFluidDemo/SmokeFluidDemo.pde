@@ -14,7 +14,7 @@ float h = 1; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
-boolean fluid = false;
+boolean fluid = true;
 
 long lastTime = 0;
 
