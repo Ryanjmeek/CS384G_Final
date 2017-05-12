@@ -14,11 +14,11 @@ float h = 1; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
-boolean fluid = true;
+boolean fluid = false;
 
 long lastTime = 0;
 
-float delta = 0.01;
+float delta = 1.0;
 
 double smokeWeight = 1;
 double densityTolerance = 0.001;
@@ -57,7 +57,7 @@ void draw() {
               myCell.density[grid.newVals]*64, myCell.density[grid.newVals]*64);
       }
       else{
-        pixels[loc] = color(myCell.pressure[grid.newPressure]*555, myCell.vx[grid.newVals]*128+128, myCell.vy[grid.newVals]*128+128);
+        pixels[loc] = color(myCell.pressure[grid.newPressure]*555, myCell.velocity[grid.newVals].x*128+128, myCell.velocity[grid.newVals].y*128+128);
       }
       //pixels[loc] = color(myCell.pressure[grid.newPressure]*128 + 128, 0, 0);
       //pixels[loc] = color(0, myCell.vx[grid.newVals]*128+128, 0);
