@@ -5,7 +5,6 @@ class SmokeForces{
   static final float zeta = 1.0;
   float[][] omega;
   
-  
   SmokeForces(FluidSolver p){
     parent = p;
     omega = new float[N][N];
@@ -21,7 +20,6 @@ class SmokeForces{
           this.applyBouyancy(i,j);
           this.setOmega(i,j);
           this.applyVorticity(i,j);
-          
         }
       }
     }
@@ -42,7 +40,6 @@ class SmokeForces{
   
   
   private void setOmega(int i, int j) {
-    //TODO switch this bounds checking to getCell
     float vel1 = (i+1 < N) ? parent.theGrid[i+1][j].velocity[parent.curVals].y : parent.theGrid[i][j].velocity[parent.curVals].y;
     float vel2 = (i-1 >= 0) ? parent.theGrid[i-1][j].velocity[parent.curVals].y : parent.theGrid[i][j].velocity[parent.curVals].y;
     float vel3 = (j+1 < N) ? parent.theGrid[i][j+1].velocity[parent.curVals].x : parent.theGrid[i][j].velocity[parent.curVals].x;
@@ -67,6 +64,4 @@ class SmokeForces{
     parent.theGrid[i][j].velocity[parent.newVals].x += confX;
     parent.theGrid[i][j].velocity[parent.newVals].y += confY;
   }
-  
-  
 }
