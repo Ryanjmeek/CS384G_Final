@@ -16,22 +16,22 @@ We used a fixed time step of 1, a grid with cell size of 1 (where 1 cell corresp
 
 
 ## References
-2007 Siggraph Fluids Notes
+[1] 2007 Siggraph Fluids Notes
 https://www.cs.ubc.ca/~rbridson/fluidsimulation/fluids_notes.pdf
 
-GPU Gems Chapter 38. Fast Fluid Dynamics Simulation on the GPU
+[2] GPU Gems Chapter 38. Fast Fluid Dynamics Simulation on the GPU
 https://developer.nvidia.com/gpugems/GPUGems/gpugems_ch38.html
 
-Example Fluid Solver
+[3] Example Fluid Solver
 https://29a.ch/sandbox/2012/fluidcanvas/
 https://29a.ch/sandbox/2012/fluidcanvas/fluid.js
 
-Example Fluid Solver with Explanations
+[4] Example Fluid Solver with Explanations
 http://jamie-wong.com/2016/08/05/webgl-fluid-simulation/
 
-Jos Stam Stable Fluids
+[5] Jos Stam Stable Fluids
 http://www.dgp.toronto.edu/people/stam/reality/Research/pdf/ns.pdf
 
-Explosions Paper
+[6] Explosions Paper
 http://silviojemma.com/public/papers/fire/animating%20suspended%20particle%20explosion.pdf
 
