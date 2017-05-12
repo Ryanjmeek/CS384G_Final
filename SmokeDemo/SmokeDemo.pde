@@ -3,19 +3,20 @@ import Jama.*;
 ParticleSystem ps;
 Grid grid;
 PrintWriter output;
+boolean doExplosion = false;
 
 PImage img;
 
-boolean debug = true;
+boolean debug = false;
 boolean printVelocities = false;
 
-int N = 120; // dimension of grid
-double h; // size of each voxel
+int N = 320; // dimension of grid
+double h = 1; // size of each voxel
 double diff = 2.0; // diffusion rate
 double visc = 20000.0; // viscosity
 
 long lastTime = 0;
-float delta = 0.1;
+float delta = 1;
 
 double smokeWeight = 1;
 double densityTolerance = 0.001;
@@ -29,7 +30,7 @@ final double epsilon = 1.0e-20;
 boolean DRAW_VELOCITY_FIELD = false;
 
 void setup() {
-  size(640, 640, P3D);
+  size(320, 320, P3D);
   
   output = createWriter("debug.txt");
   grid = new Grid();
@@ -49,7 +50,7 @@ void draw() {
   //delta = (millis() - lastTime)/100;
   //delta = 0.1;
   //if(delta < epsilon) return;
-  
+  /*
   if (DRAW_VELOCITY_FIELD){
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
@@ -64,18 +65,29 @@ void draw() {
         drawVector((new PVector(grid.getCell(i,j).velocity[grid.oldVelocity].x, grid.getCell(i,j).velocity[grid.oldVelocity].y)).normalize(), new PVector((float)((i+0.5)*h),(float)((j+0.5)*h)), 0.1);
       }
     }
+  }*/
+  loadPixels();
+  for (int i = 0; i < N; i++){
+      for (int j = 0; j < N; j++){
+        Cell myCell = grid.theGrid[i][j];
+        pixels[j*N + i] = color((float)myCell.pressure[grid.newPressure]*555, (float)myCell.velocity[grid.newVelocity].x*128+128, (float)myCell.velocity[grid.newVelocity].y*128+128);
+      }
   }
-
+  updatePixels();
+/*
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
       drawSmokeAt(img, i, j, 255*grid.getCell(i,j).density[grid.oldVelocity]);
     }
   }
-  
+  */
   if(delta > epsilon){
+    grid.velocityBoundary();
     grid.advect();
-    grid.applyBodyForces();
+    //grid.applyBodyForces();
+    grid.addMouseForce();
     grid.project();
+    grid.pressureBoundary();
     output.flush();
   }
   int swap = grid.oldVelocity;
@@ -214,4 +226,8 @@ class Particle {
       return false;
     }
   }
+}
+
+void mousePressed(){
+  doExplosion = true;
 }

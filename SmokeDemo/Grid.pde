@@ -5,13 +5,15 @@ class Grid {
   int oldVelocity;
   int newPressure;
   int oldPressure;
+  float lastMouseX;
+  float lastMouseY;
   
   Grid(){
     
     //theGrid[0][0] = new Cell(1.0, new PVector(0,1), 585.0, 1.0, true);
     //this.applyGravity(0,0);
     //this.applyBouyancy(0,0);
-    theSource = new Cell(1.0, new PVector(0,-1), 585.0, 1.0, true);
+    //theSource = new Cell(1.0, new PVector(0,-1), 585.0, 1.0, true);
     //theSource = new Cell(1.0, new PVector(0,-1), 585.0, 1.0, false);
     //this.apply(0,0);
     newVelocity = 0;
@@ -20,7 +22,7 @@ class Grid {
     oldPressure = 1;
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
-        theGrid[i][j] = new Cell(0.0, new PVector(random(-0.5,0.5),-1), 23.0, 0.0, false);
+        theGrid[i][j] = new Cell(0.0, new PVector(random(-5.0,5.0),random(-5.0,5.0)), 23.0, 0.0, false);
         //theGrid[i][j] = new Cell(0.0, new PVector(0,-1), 23.0, 0.0, false);
       }
     }
@@ -28,181 +30,135 @@ class Grid {
     //theGrid[N/2][N/2] = new Cell(1.0, new PVector(0,1), 585.0, 1.0, false); // source, temperature of source is 585 (fire)
     
   }
+  float clamp(float a, float min, float max){
+    return Math.max(Math.min(a, max), min);
+
+  }
   
+  void addMouseForce(){
+    if(!doExplosion) return;
+    int x = (int) clamp(mouseX, 1, N-2);
+    int y = (int )clamp(mouseY, 1, N-2);
+    float dx = mouseX-lastMouseX;
+    float dy = mouseY-lastMouseY;
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
+    Cell leftCell = getCell(x-1,y);
+    Cell rightCell = getCell(x+1,y);
+    Cell topCell = getCell(x,y-1);
+    Cell botCell = getCell(x,y+1);
+    Cell topRightCell = getCell(x+1,y-1);
+    Cell botRightCell = getCell(x+1,y+1);
+    Cell topLeftCell = getCell(x-1,y-1);
+    Cell botLeftCell = getCell(x-1,y+1);
+    
+    leftCell.velocity[newVelocity].y = 0.0;
+    leftCell.velocity[newVelocity].x = -100.0;
+    
+    topCell.velocity[newVelocity].y = -100.0;
+    topCell.velocity[newVelocity].x = 0;
+    
+    rightCell.velocity[newVelocity].y = 0.0;
+    rightCell.velocity[newVelocity].x = 100.0;
+    
+    botCell.velocity[newVelocity].y = 100.0;
+    botCell.velocity[newVelocity].x = 0.0;
+    
+    topRightCell.velocity[newVelocity].y = -70.0;
+    topRightCell.velocity[newVelocity].x = 70.0;  
+    
+    botRightCell.velocity[newVelocity].y = 70.0;
+    botRightCell.velocity[newVelocity].x = 70.0;  
+    
+    topLeftCell.velocity[newVelocity].y = -70.0;
+    topLeftCell.velocity[newVelocity].x = -70.0;
+    
+    botLeftCell.velocity[newVelocity].y = 70.0;
+    botLeftCell.velocity[newVelocity].x = -70.0;
+    
+    doExplosion = false;
+  }
   Cell getCell(int i, int j){
-    if(i < 0 || i > N - 1 || j < 0 || j > N - 1){
-      return new Cell(0, new PVector(0,0,0), 23, 0, false);
-    }
+    i = (i < 0) ? 0 : (i > N-1) ? N-1 : i;
+    j = (j < 0) ? 0 : (j > N-1) ? N-1 : j;
     //if(debug) output.println("This is i: " + i + " and j: " + j);
     return theGrid[i][j];
   }
   
-  //tell us if this is the source, if so return
-  private boolean checkSource(float i, float j){
-    if(debug) output.println("in checkSource and this is i: " + i + ", j: " + j);
-    //if(j > 570 && i > 213 && i < 416){
-    if(j > 610 && i > 213 && i < 416){
-      if(debug) output.println("in checkSource and this was a source");
-      return true;
+  void velocityBoundary(){
+    for(int x = 0; x < N; x++) {        
+        theGrid[x][0].velocity[oldVelocity].x = -theGrid[x][1].velocity[oldVelocity].x;
+        theGrid[x][0].velocity[oldVelocity].y = -theGrid[x][1].velocity[oldVelocity].y;
+        
+        theGrid[x][N-1].velocity[oldVelocity].x = -theGrid[x][N-2].velocity[oldVelocity].x;
+        theGrid[x][N-1].velocity[oldVelocity].y = -theGrid[x][N-2].velocity[oldVelocity].y;
     }
-    return false;
-      
+    for(int y = 0; y < N; y++) {
+        theGrid[0][y].velocity[oldVelocity].x = -theGrid[1][y].velocity[oldVelocity].x;
+        theGrid[0][y].velocity[oldVelocity].y = -theGrid[1][y].velocity[oldVelocity].y;
+        
+        theGrid[N-1][y].velocity[oldVelocity].x = -theGrid[N-2][y].velocity[oldVelocity].x;
+        theGrid[N-1][y].velocity[oldVelocity].y = -theGrid[N-2][y].velocity[oldVelocity].y;
+    }
+    
   }
   
-  private PVector getSourceVelocity(){
-    //return new PVector(random(-0.5,0.5),-1);
-    //return new PVector(theSource.velocity[0].x,theSource.velocity[0].y);
-    return new PVector(random(-0.5,0.5),-1);
-  }
-  
-  private double getSourceDensity(){
-    return theSource.density[0];
-  }
-  
-  private double getSourceTemp(){
-    return theSource.temperature[0];
+  void pressureBoundary(){
+    for(int x = 0; x < N; x++) {        
+        theGrid[x][0].pressure[newPressure] = theGrid[x][1].pressure[newPressure];        
+        theGrid[x][N-1].pressure[newPressure] = theGrid[x][N-2].pressure[newPressure];
+    }
+    for(int y = 0; y < N; y++) {
+        theGrid[0][y].pressure[newPressure] = theGrid[1][y].pressure[newPressure];
+        theGrid[N-1][y].pressure[newPressure] = theGrid[N-2][y].pressure[newPressure];
+    }
   }
   
   void advect(){
     //theGrid[N/2][N/2] = new Cell(1.0, new PVector(0,-1), 585.0, 1.0, false); // source
-    for (int i = 0; i < N; i++){
-      for (int j = 0; j < N; j++){
-        this.advectDensity(i,j);
-        this.advectTemperature(i,j);
+    for (int i = 1; i < N-1; i++){
+      for (int j = 1; j < N-1; j++){
+        //this.advectDensity(i,j);
+        //this.advectTemperature(i,j);
         this.advectVelocity(i,j);
       }
     }
   }
   
-  void applyBodyForces() {
-    for(int i = 0; i < N; i++) {
-      for(int j = 0; j < N; j++) {
-        //if (theGrid[i][j].isASource()){continue;}
-        if(theGrid[i][j].density[newVelocity] < densityTolerance) continue;
-        //if(debug) output.println("in applyBodyForces i: " + i + ", j: " + j);
-        //if(debug) output.println("velocity before BodyForces x: " + theGrid[i][j].velocity[oldVelocity].x + ", y: " + theGrid[i][j].velocity.y);
-        //if(debug && j < N - 4) output.println("velocity before BodyForces x: " + theGrid[i][j + 3].velocity.x + ", y: " + theGrid[i][j + 3].velocity.y);
-        this.setOmega(i,j);
-        this.applyVorticity(i,j);
-        this.applyGravity(i,j);
-        this.applyBouyancy(i,j);
-        //if(debug) output.println("velocity after BodyForces x: " + theGrid[i][j].velocity.x + ", y: " + theGrid[i][j].velocity.y);
-        //if(debug && j < N - 4) output.println("velocity after BodyForces x: " + theGrid[i][j + 3].velocity.x + ", y: " + theGrid[i][j + 3].velocity.y);
-        //
-      }
-    }
+  float bilerpVelocityY(float x, float y) {
+      int x0 = floor(x);
+      int y0 = floor(y);
+      int x1 = x0+1;
+      int y1 = y0+1;
+      float p00 = getCell(x0,y0).velocity[oldVelocity].y;
+      float p01 = getCell(x0,y1).velocity[oldVelocity].y;
+      float p10 = getCell(x1,y0).velocity[oldVelocity].y;
+      float p11 = getCell(x1,y1).velocity[oldVelocity].y;
+      return lerp(lerp(p00, p10, x-x0), lerp(p01, p11, x-x0), y-y0);
   }
   
-  private void applyGravity(int i, int j) {
-    PVector gravity = new PVector(0.0, .001);
-    theGrid[i][j].velocity[newVelocity].x += gravity.x;
-    theGrid[i][j].velocity[newVelocity].y += gravity.y;
-  }
-  
-  private void applyBouyancy(int i, int j) {
-    PVector bouyancy = new PVector(0.0, (float)(alpha * theGrid[i][j].density[newVelocity]
-      + -beta * (theGrid[i][j].temperature[newVelocity] - ambientTemp)));
-    theGrid[i][j].velocity[newVelocity].x += bouyancy.x;
-    theGrid[i][j].velocity[newVelocity].y += bouyancy.y;
-    if(debug) output.println("in applyBuoyancy and bouyancy.x: " + bouyancy.x + ", bouyancy.y: " + bouyancy.y);
-  }
-  
-  private void setOmega(int i, int j) {
-    double vel1 = (i+1 < N) ? theGrid[i+1][j].velocity[oldVelocity].y : theGrid[i][j].velocity[oldVelocity].y;
-    double vel2 = (i-1 >= 0) ? theGrid[i-1][j].velocity[oldVelocity].y : theGrid[i][j].velocity[oldVelocity].y;
-    double vel3 = (j+1 < N) ? theGrid[i][j+1].velocity[oldVelocity].x : theGrid[i][j].velocity[oldVelocity].x;
-    double vel4 = (j-1 >= 0) ? theGrid[i][j-1].velocity[oldVelocity].x : theGrid[i][j].velocity[oldVelocity].x;
-    double omega = (vel1 - vel2)/(2*h) - (vel3 - vel4)/(2*h);
-    theGrid[i][j].omega[newVelocity] = omega;
-  }
-  
-  private void applyVorticity(int i, int j) {
-    double omega1 = (i+1 < N) ? theGrid[i+1][j].omega[newVelocity] : theGrid[i][j].omega[newVelocity];
-    double omega2 = (i-1 >= 0) ? theGrid[i-1][j].omega[newVelocity] : theGrid[i][j].omega[newVelocity];
-    double omega3 = (j+1 < N) ? theGrid[i][j+1].omega[newVelocity] : theGrid[i][j].omega[newVelocity];
-    double omega4 = (j-1 >= 0) ? theGrid[i][j-1].omega[newVelocity] : theGrid[i][j].omega[newVelocity];
-    double omegaDivX = (omega1 - omega2)/(2*h);
-    double omegaDivY = (omega3 - omega4)/(2*h);
-    PVector omegaDiv = new PVector((float)omegaDivX, (float)omegaDivY);
-    PVector vorticity = new PVector((float)(omegaDiv.x / (omegaDiv.mag() + epsilon)),
-      (float)(omegaDiv.y / (omegaDiv.mag() + epsilon)));
-    theGrid[i][j].velocity[newVelocity].x += vorticity.x;
-    theGrid[i][j].velocity[newVelocity].y += vorticity.y;
-  }
-  
-  private void advectDensity(int i, int j){
-      //if (theGrid[i][j].isASource()){return;}
-      float x_prev = i*(float)h - theGrid[i][j].velocity[oldVelocity].x*delta;
-      float y_prev = j*(float)h - theGrid[i][j].velocity[oldVelocity].y*delta;
-      if(checkSource(x_prev,y_prev)){
-        theGrid[i][j].density[newVelocity] = getSourceDensity();
-        return;
-      }
-      if(debug) output.println("in advectDensity and this is i: " + i + ", j: " + j);
-      if(debug) output.println("x_prev before change = " + x_prev + ", y_prev = " + y_prev);
-      x_prev = x_prev/((float)h);
-      y_prev = y_prev/((float)h);
-      if (x_prev < 0) {x_prev = 0;}
-      if (x_prev >= N-1) {x_prev = N-1;}
-      if (y_prev < 0) {y_prev = 0;}
-      if (y_prev >= N-1) {y_prev = N-1;}
-      
-      if(debug) output.println("x_prev after change = " + x_prev + ", y_prev = " + y_prev);
-      
-      double d_bl = theGrid[floor(x_prev)][floor(y_prev)].density[oldVelocity];
-      double d_tl = theGrid[floor(x_prev)][ceil(y_prev)].density[oldVelocity];
-      double d_br = theGrid[ceil(x_prev)][floor(y_prev)].density[oldVelocity];
-      double d_tr = theGrid[ceil(x_prev)][ceil(y_prev)].density[oldVelocity];
-      
-      double d_ml = lerp((float)d_bl, (float)d_tl, (float)((y_prev-floor(y_prev))/h));
-      double d_mr = lerp((float)d_br, (float)d_tr, (float)((y_prev-floor(y_prev))/h));
-      
-      double d_mid = lerp((float)d_ml, (float)d_mr, (float)((x_prev-floor(x_prev))/h));
-      
-      theGrid[i][j].density[newVelocity] = d_mid;
-  }
-  
-    private void advectTemperature(int i, int j){
-      //if (theGrid[i][j].isASource()){return;}
-      float x_prev = i*(float)h - theGrid[i][j].velocity[oldVelocity].x*delta;
-      float y_prev = j*(float)h - theGrid[i][j].velocity[oldVelocity].y*delta;
-      if(checkSource(x_prev,y_prev)){
-        theGrid[i][j].temperature[newVelocity] = getSourceTemp();
-        return;
-      }
-      x_prev = x_prev/((float)h);
-      y_prev = y_prev/((float)h);
-      
-      if (x_prev < 0) {x_prev = 0;}
-      if (x_prev >= N-1) {x_prev = N-1;}
-      if (y_prev < 0) {y_prev = 0;}
-      if (y_prev >= N-1) {y_prev = N-1;}
-      
-      //println("x_prev = " + x_prev + ", y_prev = " + y_prev);
-      
-      double t_bl = theGrid[floor(x_prev)][floor(y_prev)].temperature[oldVelocity];
-      double t_tl = theGrid[floor(x_prev)][ceil(y_prev)].temperature[oldVelocity];
-      double t_br = theGrid[ceil(x_prev)][floor(y_prev)].temperature[oldVelocity];
-      double t_tr = theGrid[ceil(x_prev)][ceil(y_prev)].temperature[oldVelocity];
-      
-      double t_ml = lerp((float)t_bl, (float)t_tl, (float)((y_prev-floor(y_prev))/h));
-      double t_mr = lerp((float)t_br, (float)t_tr, (float)((y_prev-floor(y_prev))/h));
-      
-      double t_mid = lerp((float)t_ml, (float)t_mr, (float)((x_prev-floor(x_prev))/h));
-      
-      theGrid[i][j].temperature[newVelocity] = t_mid;
+  float bilerpVelocityX(float x, float y) {
+      int x0 = floor(x);
+      int y0 = floor(y);
+      int x1 = x0+1;
+      int y1 = y0+1;
+      float p00 = getCell(x0,y0).velocity[oldVelocity].x;
+      float p01 = getCell(x0,y1).velocity[oldVelocity].x;
+      float p10 = getCell(x1,y0).velocity[oldVelocity].x;
+      float p11 = getCell(x1,y1).velocity[oldVelocity].x;
+      return lerp(lerp(p00, p10, x-x0), lerp(p01, p11, x-x0), y-y0);
   }
   
   private void advectVelocity(int i, int j){
         //if (theGrid[i][j].isASource()){return;}
-        float x_prev = i*(float)h - theGrid[i][j].velocity[oldVelocity].x*delta;
-        float y_prev = j*(float)h - theGrid[i][j].velocity[oldVelocity].y*delta;
-        if(checkSource(x_prev,y_prev)){
+        float x_prev = i - theGrid[i][j].velocity[oldVelocity].x*delta;
+        float y_prev = j - theGrid[i][j].velocity[oldVelocity].y*delta;
+        /*if(checkSource(x_prev,y_prev)){
           theGrid[i][j].velocity[newVelocity] = getSourceVelocity();
           return;
-        }
-        x_prev = x_prev/((float)h);
-        y_prev = y_prev/((float)h);
+        }*/
+        //x_prev = x_prev/((float)h);
+        //y_prev = y_prev/((float)h);
         if (x_prev < 0) {x_prev = N - 1;}
         if (x_prev >= N-1) {x_prev = 0;}
         if (y_prev < 0) {y_prev = N - 1;}
@@ -223,7 +179,7 @@ class Grid {
         theGrid[i][j].velocity[newVelocity] = v_mid;
   }
   
-  boolean debugDivergence = true;
+  boolean debugDivergence = false;
   void computeDivergence(double[][] divergence){
     double C = (-2*h*smokeWeight/delta);
     //double C = (-2*h*smokeWeight/2);
@@ -242,58 +198,34 @@ class Grid {
         if(i != N - 1) u_right = getCell(i + 1, j).velocity[newVelocity].x;
         if(j != N - 1) u_bot = getCell(i, j + 1).velocity[newVelocity].y;
         if(debugDivergence) output.println("C: " + C + ", u_right: " + u_right + ", u_left: " + u_left + ", u_bot: " + u_bot + ", u_top: " + u_top);
-        divergence[i][j] = C*(u_right - u_left + u_top - u_bot);
+        divergence[i][j] = C*(u_right - u_left +  u_bot - u_top);
         if(debugDivergence) output.println("in computeDivergence and Cell i: " + i + ", j: " + j + " divergence: " + divergence[i][j] );
       }
     }
   }
-  
-  void computeCoeffs(double[][][] coeffs){
-    for(int i=0; i < N; i++){
-      for(int j=0; j < N; j++){
-        //coefficients
-        double cleft = 1, cright = 1, ctop = 1, cbot = 1;
-        Cell left = getCell(i - 2, j);
-        Cell right = getCell(i + 2, j);
-        Cell top = getCell(i, j - 2);
-        Cell bot = getCell(i, j + 2);
-        if(left.density[newVelocity] < densityTolerance) cleft = 0; 
-        if(right.density[newVelocity] < densityTolerance) cright = 0;
-        if(top.density[newVelocity] < densityTolerance) ctop = 0;
-        if(bot.density[newVelocity] < densityTolerance) cbot = 0;
-        double cdiv = 4;
-        coeffs[i][j][0] = 1/cdiv;
-        coeffs[i][j][1] = cleft/cdiv;
-        coeffs[i][j][2] = cright/cdiv;
-        coeffs[i][j][3] = ctop/cdiv;
-        coeffs[i][j][4] = cbot/cdiv;
-        if(debug) output.println("in computeCoeffs and these are coeffs: " + coeffs[i][j][0] + ", " + coeffs[i][j][1] + ", " + coeffs[i][j][2] + ", " + coeffs[i][j][3] + ", " + coeffs[i][j][4]);
-      }
-    }
-  }
-  
+   
   boolean debugIteration = false;
   double doIteration(double[][] divergence, double[][][] coeffs, int iter){
     double maxDiff = 0;
-    for(int i = 0; i < N; i++){
-      for(int j = 0; j < N; j++){
+    for(int i = 0; i < N-1; i++){
+      for(int j = 0; j < N-1; j++){
         Cell myCell = getCell(i,j);
         //fif (myCell.isASource()){continue;}
-        if(myCell.density[newVelocity] < densityTolerance){
+        /*if(myCell.density[newVelocity] < densityTolerance){
           myCell.pressure[newPressure] = 0;
           continue;
-        }
-        Cell left = getCell(i - 2, j);
-        Cell right = getCell(i + 2, j);
-        Cell top = getCell(i, j - 2);
-        Cell bot = getCell(i, j + 2);
+        }*/
+        Cell left = getCell(i - 1, j);
+        Cell right = getCell(i + 1, j);
+        Cell top = getCell(i, j - 1);
+        Cell bot = getCell(i, j + 1);
         double pressureOld = iter == 0 ? 0.0 : myCell.pressure[oldPressure];
         double pressureLeft = iter == 0 ? 0.0 : left.pressure[oldPressure];
         double pressureRight = iter == 0 ? 0.0 : right.pressure[oldPressure];
         double pressureTop = iter == 0 ? 0.0 : top.pressure[oldPressure];
         double pressureBot = iter == 0 ? 0.0 : bot.pressure[oldPressure];
-        double pressureNew = coeffs[i][j][0]*divergence[i][j] + coeffs[i][j][1]*pressureLeft + coeffs[i][j][2]*pressureRight
-                                                                        + coeffs[i][j][3]*pressureTop + coeffs[i][j][4]*pressureBot;
+        double pressureNew = 0.25*(divergence[i][j] + pressureLeft + pressureRight
+                                                                        + pressureTop + pressureBot);
         double diff = (double) abs((float) (pressureNew - pressureOld));
         myCell.pressure[newPressure] = pressureNew;
         if(debugIteration) output.println("in doIteration and this is i: " + i + ", j: " + j + ", pressureNew: " + pressureNew + ", pressureOld: " + pressureOld);
@@ -305,8 +237,8 @@ class Grid {
   
   boolean debugVelocity = false;
   void updateVelocities(){
-    for(int i = 0; i < N; i++){
-      for(int j = 0; j < N; j++){
+    for(int i = 0; i < N-1; i++){
+      for(int j = 0; j < N-1; j++){
         Cell myCell = getCell(i,j);
         //if (myCell.isASource()){continue;}
         Cell left = getCell(i - 1, j);
@@ -320,20 +252,16 @@ class Grid {
         double pressureBot = j == N - 1 ? 0 : bot.pressure[newVelocity];
         double oldVelocityX = myCell.velocity[newVelocity].x;
         double oldVelocityY = myCell.velocity[newVelocity].y;
-        //if(debugVelocity && myPressure > 0) output.println("in updateVelocities before update and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
-        myCell.velocity[newVelocity].x = myCell.velocity[newVelocity].x - delta*((float)pressureRight - (float)myPressure)/((float)h*(float)smokeWeight);
-        myCell.velocity[newVelocity].y = myCell.velocity[newVelocity].y + delta*((float)pressureBot - (float)myPressure)/((float)h*(float)smokeWeight);
-        //if(debugVelocity && myPressure > 0) output.println("in updateVelocities after update and Cell i: " + i + ", j: " + j + ", velocity.x " + myCell.velocity.x + ", velocity.y: " + myCell.velocity.y );
-        if(debugVelocity && myPressure > 0) output.println("in updateVelocities myPressure: " + myPressure + ", pressureRight: " + pressureRight + ", pressureLeft: " + pressureLeft);
-        double diffX = oldVelocityX - myCell.velocity[newVelocity].x;
-        double diffY = oldVelocityY - myCell.velocity[newVelocity].y;
-        if(debugVelocity && myPressure > 0) output.println("in updateVelocities and diffX: " + diffX + ", diffY: " + diffY);
+       
+        myCell.velocity[newVelocity].x = myCell.velocity[newVelocity].x - ((float)pressureRight - (float)pressureLeft)*0.5;
+        myCell.velocity[newVelocity].y = myCell.velocity[newVelocity].y - ((float)pressureBot - (float)pressureTop)*0.5;
+        
       }
     }
     
   
   }
-  boolean debugProject = true;
+  boolean debugProject = false;
   void debugProject(double[][] divergence, double[][][] coeffs){
     for(int i = 0; i < N; i++){
       for(int j = 0; j < N; j++){
@@ -365,9 +293,9 @@ class Grid {
     double diff = 999999.0; //a big number
     int iter = 0;
     computeDivergence(divergence);
-    computeCoeffs(coeffs);
+    //computeCoeffs(coeffs);
     //while(diff > pressureTolerance){
-    while(iter < 10){
+    while(iter < 8){
       diff = doIteration(divergence, coeffs, iter);
       //debugProject(divergence, coeffs);
       if(debug) output.println("in project and this is iter: " + iter + ", maxDiff: " + diff);
