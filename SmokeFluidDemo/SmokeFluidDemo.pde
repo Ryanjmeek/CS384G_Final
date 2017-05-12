@@ -44,7 +44,8 @@ void draw() {
   for(int y = 0; y < N-20; y++) {
     for(int x = 0; x < N; x++) {
       int loc = y*N + x;
-      FluidCell myCell = grid.getCell(x,y);
+      /*FluidCell myCell = grid.getCell(x,y);*/
+      FluidCell myCell = grid.theGrid[x][y];
       /*if(myCell.density[grid.newVals] > densityTolerance){
         pixels[loc] = color(128,128,128);
       }*/

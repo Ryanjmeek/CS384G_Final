@@ -28,7 +28,7 @@ class FluidSolver {
       for (int j = 0; j < N; j++){        
           //theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
           if(isSolid(i,j)){
-            theGrid[i][j] = new FluidCell(0,0, 1.0);
+            theGrid[i][j] = new FluidCell(0,0, 0.0);
           }
           else{
             theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0));
@@ -92,7 +92,7 @@ class FluidSolver {
     velocityBoundary();
     advect(TIME_STEP);
     addMouseForce();
-    smoke.addSmokeForces();
+    //smoke.addSmokeForces();
     computeDivergence();
     fastJacobi(-1, 0.25, 8);
     pressureBoundary();
@@ -208,8 +208,28 @@ class FluidSolver {
   }
   
   FluidCell getCell(int x, int y){
-    x = (x < 0 ? 0 : (x > N-1 ? N-1 : x))|0;
-    y = (y < 0 ? 0 : (y > N-1 ? N-1 : y))|0;
+    x = (x < 0 ? 0 : (x > N-1 ? N-1 : x));
+    y = (y < 0 ? 0 : (y > N-1 ? N-1 : y));
+    
+    if(theGrid[x][y].solid){
+      int diffLeft = x - SOLID_START_X;
+      int diffRight = SOLID_END_X - x;
+      int diffTop = y - SOLID_START_Y;
+      int diffBot = SOLID_END_Y - y;
+      if(diffLeft <= diffRight && diffLeft <= diffTop && diffLeft <= diffBot){
+        x = SOLID_START_X;
+      }
+      else if(diffRight <= diffLeft && diffRight <= diffTop && diffRight <= diffBot){
+        x = SOLID_END_X;
+      }
+      else if(diffTop <= diffRight && diffTop <= diffLeft && diffTop <= diffBot){
+        y = SOLID_START_Y;
+      }
+      else if(diffBot <= diffRight && diffBot <= diffTop && diffBot <= diffLeft){
+        y = SOLID_END_X;
+      }
+    }
+    
     //if(debug) output.println("This is i: " + i + " and j: " + j);
     return theGrid[x][y];
   }
