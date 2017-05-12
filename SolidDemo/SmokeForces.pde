@@ -29,23 +29,24 @@ class SmokeForces{
   
   private void applyGravity(int i, int j) {
     PVector gravity = new PVector(0.0, .001);
-    parent.theGrid[i][j].vx[parent.newVals] += gravity.x;
-    parent.theGrid[i][j].vy[parent.newVals] += gravity.y;
+    parent.theGrid[i][j].velocity[parent.newVals].x += gravity.x;
+    parent.theGrid[i][j].velocity[parent.newVals].y += gravity.y;
   }
   
   private void applyBouyancy(int i, int j) {
     PVector bouyancy = new PVector(0.0, (float)(alpha * parent.theGrid[i][j].density[parent.curVals]
       + -beta * (parent.theGrid[i][j].temperature[parent.curVals] - FluidCell.AMBIENT_TEMP)));
-    parent.theGrid[i][j].vx[parent.newVals] += bouyancy.x;
-    parent.theGrid[i][j].vy[parent.newVals] += bouyancy.y;
+    parent.theGrid[i][j].velocity[parent.newVals].x += bouyancy.x;
+    parent.theGrid[i][j].velocity[parent.newVals].y += bouyancy.y;
   }
   
   
   private void setOmega(int i, int j) {
-    float vel1 = (i+1 < N) ? parent.theGrid[i+1][j].vy[parent.curVals] : parent.theGrid[i][j].vy[parent.curVals];
-    float vel2 = (i-1 >= 0) ? parent.theGrid[i-1][j].vy[parent.curVals] : parent.theGrid[i][j].vy[parent.curVals];
-    float vel3 = (j+1 < N) ? parent.theGrid[i][j+1].vx[parent.curVals] : parent.theGrid[i][j].vx[parent.curVals];
-    float vel4 = (j-1 >= 0) ? parent.theGrid[i][j-1].vx[parent.curVals] : parent.theGrid[i][j].vx[parent.curVals];
+    //TODO switch this bounds checking to getCell
+    float vel1 = (i+1 < N) ? parent.theGrid[i+1][j].velocity[parent.curVals].y : parent.theGrid[i][j].velocity[parent.curVals].y;
+    float vel2 = (i-1 >= 0) ? parent.theGrid[i-1][j].velocity[parent.curVals].y : parent.theGrid[i][j].velocity[parent.curVals].y;
+    float vel3 = (j+1 < N) ? parent.theGrid[i][j+1].velocity[parent.curVals].x : parent.theGrid[i][j].velocity[parent.curVals].x;
+    float vel4 = (j-1 >= 0) ? parent.theGrid[i][j-1].velocity[parent.curVals].x : parent.theGrid[i][j].velocity[parent.curVals].x;
     float omegaVal =  (vel1 - vel2)/(2*h) - (vel3 - vel4)/(2*h);
     omega[i][j] = omegaVal;
   }
@@ -63,8 +64,8 @@ class SmokeForces{
     // We flip the y because of the grid
     float confX = (-omega[i][j] * N1.y) * h * zeta;
     float confY = (omega[i][j] * N1.x) * h * zeta;
-    parent.theGrid[i][j].vx[parent.newVals] += confX;
-    parent.theGrid[i][j].vy[parent.newVals] += confY;
+    parent.theGrid[i][j].velocity[parent.newVals].x += confX;
+    parent.theGrid[i][j].velocity[parent.newVals].y += confY;
   }
   
   
