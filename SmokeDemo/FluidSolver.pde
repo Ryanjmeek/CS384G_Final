@@ -5,8 +5,6 @@ class FluidSolver {
   int oldPressure;
   int newVals;
   int curVals;
-  float lastMouseX;
-  float lastMouseY;
   static final float TIME_STEP = 1.0;
   static final int SMOKE_START_X = ((N/2) - 20);
   static final int SMOKE_END_X = ((N/2) + 20);
@@ -20,13 +18,10 @@ class FluidSolver {
     curVals = 1;
     smoke = new SmokeForces(this); 
     for (int i = 0; i < N; i++){
-      for (int j = 0; j < N; j++){        
-          //theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0), 1);
+      for (int j = 0; j < N; j++){
           theGrid[i][j] = new FluidCell(random(-5.0,5.0),random(-5.0,5.0));
-          //theGrid[i][j] = new FluidCell(0,-0.05);
       }
-    }
-    
+    }  
   }
   
   boolean isSmoke(int i, int j){
@@ -34,7 +29,6 @@ class FluidSolver {
       return true;
     }
     return false;
-    
   }
   
   void injectSmoke(){
@@ -102,14 +96,10 @@ class FluidSolver {
         double v_tl = getCell(floor(x_prev),ceil(y_prev)).temperature[curVals];
         double v_br = getCell(ceil(x_prev),floor(y_prev)).temperature[curVals];
         double v_tr = getCell(ceil(x_prev),ceil(y_prev)).temperature[curVals];
-        
-        //PVector v_ml = new PVector( lerp((float)v_bl, (float)v_tl.x, (float)((y_prev-floor(y_prev))/h)) , lerp((float)v_bl.y, (float)v_tl.y, (float)((y_prev-floor(y_prev))/h)) );
-        //PVector v_mr = new PVector( lerp((float)v_br.x, (float)v_tr.x, (float)((y_prev-floor(y_prev))/h)) , lerp((float)v_br.y, (float)v_tr.y, (float)((y_prev-floor(y_prev))/h)) );
-        
+                
         double v_ml =  lerp((float)v_bl, (float)v_tl, (float)((y_prev-floor(y_prev))/h));
         double v_mr = lerp((float)v_br, (float)v_tr, (float)((y_prev-floor(y_prev))/h)); 
         
-        //PVector v_mid = new PVector( lerp((float)v_ml.x, (float)v_mr.x, (float)((x_prev-floor(x_prev))/h)) , lerp((float)v_ml.y, (float)v_mr.y, (float)((x_prev-floor(x_prev))/h)) );
         double v_mid = lerp((float)v_ml, (float)v_mr, (float)((x_prev-floor(x_prev))/h)); 
         
         theGrid[i][j].temperature[newVals] = (float)v_mid;
@@ -117,7 +107,6 @@ class FluidSolver {
 
 
   private void advectDensity(int i, int j){
-        //if (theGrid[i][j].isASource()){return;}
         float x_prev = i - theGrid[i][j].velocity[curVals].x*delta;
         float y_prev = j - theGrid[i][j].velocity[curVals].y*delta;
         
@@ -126,24 +115,18 @@ class FluidSolver {
         double v_tl = getCell(floor(x_prev),ceil(y_prev)).density[curVals];
         double v_br = getCell(ceil(x_prev),floor(y_prev)).density[curVals];
         double v_tr = getCell(ceil(x_prev),ceil(y_prev)).density[curVals];
-        
-        //PVector v_ml = new PVector( lerp((float)v_bl, (float)v_tl.x, (float)((y_prev-floor(y_prev))/h)) , lerp((float)v_bl.y, (float)v_tl.y, (float)((y_prev-floor(y_prev))/h)) );
-        //PVector v_mr = new PVector( lerp((float)v_br.x, (float)v_tr.x, (float)((y_prev-floor(y_prev))/h)) , lerp((float)v_br.y, (float)v_tr.y, (float)((y_prev-floor(y_prev))/h)) );
-        
+                
         double v_ml =  lerp((float)v_bl, (float)v_tl, (float)((y_prev-floor(y_prev))/h));
         double v_mr = lerp((float)v_br, (float)v_tr, (float)((y_prev-floor(y_prev))/h)); 
         
-        //PVector v_mid = new PVector( lerp((float)v_ml.x, (float)v_mr.x, (float)((x_prev-floor(x_prev))/h)) , lerp((float)v_ml.y, (float)v_mr.y, (float)((x_prev-floor(x_prev))/h)) );
         double v_mid = lerp((float)v_ml, (float)v_mr, (float)((x_prev-floor(x_prev))/h)); 
         
         theGrid[i][j].density[newVals] = (float)v_mid;
   }
   
   private void advectVelocity(int i, int j){
-        //if (theGrid[i][j].isASource()){return;}
         float x_prev = i - theGrid[i][j].velocity[curVals].x*delta;
-        float y_prev = j - theGrid[i][j].velocity[curVals].y*delta;
-        
+        float y_prev = j - theGrid[i][j].velocity[curVals].y*delta;    
         
         PVector v_bl = getCell(floor(x_prev),floor(y_prev)).velocity[curVals];
         PVector v_tl = getCell(floor(x_prev),ceil(y_prev)).velocity[curVals];
@@ -173,14 +156,11 @@ class FluidSolver {
   
   float clamp(float a, float min, float max){
     return Math.max(Math.min(a, max), min);
-
   }
 
   boolean debugDivergence = false;
   void computeDivergence(double[][] divergence){
     double C = (-2*h*smokeWeight/delta);
-    //double C = (-2*h*smokeWeight/2);
-    //C = C*0.05;
     if(debugDivergence) output.println("in computeDivergence this is delta: " + delta);
     for(int i=0; i < N; i++){
       for(int j=0; j < N; j++){
@@ -202,7 +182,6 @@ class FluidSolver {
     for(int i = 0; i < N-1; i++){
       for(int j = 0; j < N-1; j++){
         FluidCell myCell = getCell(i,j);
-        //if (myCell.isASource()){continue;}
         FluidCell left = getCell(i - 1, j);
         FluidCell right = getCell(i + 1, j);
         FluidCell top = getCell(i, j - 1);
@@ -212,16 +191,12 @@ class FluidSolver {
         double pressureRight = i == N - 1 ? 0 : right.pressure[newPressure];
         double pressureTop = j == 0 ? 0 : top.pressure[newPressure];
         double pressureBot = j == N - 1 ? 0 : bot.pressure[newPressure];
-        //double oldVelocityX = myCell.velocity[newVelocity].x;
-        //double oldVelocityY = myCell.velocity[newVelocity].y;
        
         myCell.velocity[newVals].x = myCell.velocity[newVals].x - ((float)pressureRight - (float)pressureLeft)*0.5;
         myCell.velocity[newVals].y = myCell.velocity[newVals].y - ((float)pressureBot - (float)pressureTop)*0.5;
         
       }
     }
-    
-  
   }
   
   boolean debugIteration = false;
@@ -230,11 +205,6 @@ class FluidSolver {
     for(int i = 0; i < N-1; i++){
       for(int j = 0; j < N-1; j++){
         FluidCell myCell = getCell(i,j);
-        //fif (myCell.isASource()){continue;}
-        /*if(myCell.density[newVelocity] < densityTolerance){
-          myCell.pressure[newPressure] = 0;
-          continue;
-        }*/
         FluidCell left = getCell(i - 1, j);
         FluidCell right = getCell(i + 1, j);
         FluidCell top = getCell(i, j - 1);
@@ -262,8 +232,6 @@ class FluidSolver {
     double diff = 999999.0; //a big number
     int iter = 0;
     computeDivergence(divergence);
-    //computeCoeffs(coeffs);
-    //while(diff > pressureTolerance){
     while(iter < 8){
       int swap = oldPressure;
       oldPressure = newPressure;
