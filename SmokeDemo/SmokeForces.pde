@@ -67,6 +67,4 @@ class SmokeForces{
     parent.theGrid[i][j].velocity[parent.newVals].x += confX;
     parent.theGrid[i][j].velocity[parent.newVals].y += confY;
   }
-  
-  
 }

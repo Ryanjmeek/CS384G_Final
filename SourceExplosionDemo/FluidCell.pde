@@ -1,8 +1,6 @@
 class FluidCell {
   int x;
   int y;
-  //float[] velocity[].x;
-  //float[] velocity[].y;
   PVector[] velocity;
   float divergence;
   float[] pressure;
