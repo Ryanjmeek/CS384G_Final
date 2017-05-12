@@ -38,7 +38,7 @@ void draw() {
   background(0);
   grid.simulate();
   loadPixels();
-  for(int y = 0; y < N-7; y++) {
+  for(int y = 0; y < N-9; y++) {
     for(int x = 0; x < N; x++) {
       int loc = y*N + x;
       FluidCell myCell = grid.getCell(x,y);

@@ -10,7 +10,7 @@ class FluidSolver {
   static final float TIME_STEP = 1.0;
   static final int SMOKE_START_X = ((N/2) - 20);
   static final int SMOKE_END_X = ((N/2) + 20);
-  static final int SMOKE_START_Y = (N - 6);
+  static final int SMOKE_START_Y = (N - 8);
   static final int SMOKE_END_Y = (N - 1);
 
   FluidSolver(){
@@ -68,7 +68,7 @@ class FluidSolver {
     if (simCount < 3){
       injectExplosives();
     }
-    if (simCount > 2 && simCount < 5){
+    if (simCount > 2 && simCount < 7){
       injectSmoke();
     }
     velocityBoundary();
@@ -84,6 +84,7 @@ class FluidSolver {
     curVals = swap;
     
     simCount += 1;
+    if (simCount == 100){ simCount = 0; }
   }
   
   void addMouseForce(){
