@@ -46,8 +46,31 @@ class FluidSolver {
     }
   }
   
+  void injectExplosives(){
+    for(int i = SMOKE_START_X; i < SMOKE_END_X; i++){
+      for(int j = SMOKE_START_Y; j < SMOKE_END_Y; j++){
+        theGrid[i][j] = new FluidCell(random(-10.0,10.0),random(-10.0,0), 1);
+        theGrid[i][j].vy[0] = -100;
+        theGrid[i][j].vy[1] = -100;
+        float xvel = random(-30,30);
+        theGrid[i][j].vx[0] = xvel;
+        theGrid[i][j].vx[1] = xvel;
+        theGrid[i][j].density[0] = 1500;
+        theGrid[i][j].density[1] = 1500;
+        //theGrid[i][j] = new FluidCell(0,-0.05, 1);
+      }  
+    }
+  }
+  
+  int simCount = 0;
   void simulate(){
-    injectSmoke();
+    //injectSmoke();
+    if (simCount < 3){
+      injectExplosives();
+    }
+    if (simCount > 2 && simCount < 5){
+      injectSmoke();
+    }
     velocityBoundary();
     advect(TIME_STEP);
     //addMouseForce();
@@ -59,6 +82,8 @@ class FluidSolver {
     int swap = newVals;
     newVals = curVals;
     curVals = swap;
+    
+    simCount += 1;
   }
   
   void addMouseForce(){
