@@ -15,7 +15,7 @@ double visc = 20000.0; // viscosity
 
 long lastTime = 0;
 
-float delta = 0.01;
+float delta = 1.0;
 
 double smokeWeight = 1;
 double densityTolerance = 0.001;
