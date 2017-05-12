@@ -103,8 +103,6 @@ class FluidSolver {
     if(!doExplosion) return;
     int x = (int) clamp(mouseX, 1, N-2);
     int y = (int )clamp(mouseY, 1, N-2);
-    float dx = mouseX-lastMouseX;
-    float dy = mouseY-lastMouseY;
     lastMouseX = mouseX;
     lastMouseY = mouseY;
     FluidCell leftCell = getCell(x-1,y);
@@ -212,7 +210,7 @@ class FluidSolver {
   FluidCell getCell(int x, int y){
     x = (x < 0 ? 0 : (x > N-1 ? N-1 : x));
     y = (y < 0 ? 0 : (y > N-1 ? N-1 : y));
-    
+    /*
     if(theGrid[x][y].solid){
       int diffLeft = x - SOLID_START_X;
       int diffRight = SOLID_END_X - x;
@@ -231,7 +229,7 @@ class FluidSolver {
         y = SOLID_END_X;
       }
     }
-    
+    */
     //if(debug) output.println("This is i: " + i + " and j: " + j);
     return theGrid[x][y];
   }
