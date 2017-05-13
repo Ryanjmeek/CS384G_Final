@@ -18,7 +18,7 @@ Here is the top level psuedocode:
 ### BodyForces:
 
 ### Project:
-In the project step we are solving the pressure portion of the Navier-Stokes equation in order to assure our fluid reamins incompressible. Here is the equation that needs to be satisfied to assure incompressible flow:
+In the project step we are solving the pressure portion of the Navier-Stokes equation in order to assure our fluid reamins incompressible (constant volume). Here is the equation that needs to be satisfied to assure incompressible flow:
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/Pressure2.png" >
 
@@ -47,7 +47,7 @@ The solution we created follows the method of:
 2. bodyForces()
 3. project()
 
-We used a fixed time step of 1, a grid with cell size of 1 (where 1 cell corresponds to a pixel). Our grid is non-staggered. We use bilinear interpolation for our advection. We advect temperature, velocity, and density for each cell. We use body forces of Buoyancy, Gravity, and Vorticity. Our boundary conditions include a thin line of cells along solids and the edge of the simulated area that we call boundary cells. We set the pressure of the boundary cells to be equal to the pressure just inside it. We set the velocity of the boundary cells to be the opposite of the velocity just inside it. 
+We used a fixed time step of 1, a grid with cell size of 1 (where 1 cell corresponds to a pixel). Our grid is non-staggered. We use bilinear interpolation for our advection. We advect temperature, velocity, and density for each cell. We use body forces of Buoyancy, Gravity, and Vorticity. In order to solve the pressure equation, we use the Jacobi method with a constant number of iterations (8). Our boundary conditions include a thin line of cells along solids and the edge of the simulated area that we call boundary cells. We set the pressure of the boundary cells to be equal to the pressure just inside it. We set the velocity of the boundary cells to be the opposite of the velocity just inside it. 
 
 ## Artifacts Produced
 
