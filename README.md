@@ -17,7 +17,15 @@ Top Level Psuedocode:
 
 ### Project:
 
+
+
 ### BoundaryConditions:
+Our Boundary conditions are that we must assure that no fluid flows in our out of the outside box or the solid we created. In order to do this we create a thin layer of "boundary" cells just inside or outside of the boundary. We then need to make sure that the following equations are satisfied for the boundary cells. 
+
+<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/VelocityBoundary.png" >
+
+<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/PressureBoundary.png" >
+
 
 
 ## Implementation
