@@ -31,7 +31,7 @@ We used a fixed time step of 1, a grid with cell size of 1 (where 1 cell corresp
 
 ### Smoke Demo:
 
-<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/SmokeDemo.gif" width="320" height="300" align="center">
+<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/SmokeDemo.gif" width="320" height="300">
 
 ### Fire Demo:
 
