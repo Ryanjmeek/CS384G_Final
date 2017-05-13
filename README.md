@@ -29,6 +29,8 @@ We used a fixed time step of 1, a grid with cell size of 1 (where 1 cell corresp
 
 ## Artifacts Produced
 
+Using our general fluid solver, we developed a number of visually interesting artifacts, as seen below. We created 3 primary demos: smoke, fire, and explosions. Additionally, we developed boundary conditions so that our smoke could interact with simple solids in the environment. This is seen in our Solid Demo. We also created an interactive fluid simulation in which the user can click around in the screen to create miniature explosions which propagate outwards, as seen in the Interactive Fluid Demo.
+
 ### Smoke Demo:
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/SmokeDemo.gif" width="320" height="300">
