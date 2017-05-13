@@ -4,6 +4,9 @@ Realistic Smoke, Fire, and Explosion Simulations in Processing
 A real-time fluid solver implemented in Processing for simulating realistic particle effects for smoke, fire, and explosions.
 
 ## Background
+
+In order to model fluid behavior in graphics, it is critical to build a solver that simultaneously allows for visually interesting behavior and ensures high stability and computation speed. Jos Stam developed a novel system for simulating fluids in this way, and his design serves as the basis for this project. 
+
 Top Level Psuedocode:
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/TopPsuedo.png" width="500" height="200">
