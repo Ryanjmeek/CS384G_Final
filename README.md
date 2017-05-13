@@ -5,9 +5,11 @@ A real-time fluid solver implemented in Processing for simulating realistic part
 
 ## Background
 
-In order to model fluid behavior in graphics, it is critical to build a solver that simultaneously allows for visually interesting behavior and ensures high stability and computation speed. Jos Stam developed a novel system for simulating fluids in this way, and his design serves as the basis for this project. 
+In order to model fluid behavior in graphics, it is critical to build a solver that simultaneously allows for visually interesting behavior and ensures high stability and computation speed. Jos Stam developed a novel system for simulating fluids in this way, and his design serves as the basis for this project. Here is the navier stokes equation that is the basis for fluid solution systems. 
 
-Top Level Psuedocode:
+<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/NavierStokes.png" >
+
+Here is the top level psuedocode:
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/TopPsuedo.png" width="500" height="200">
 
@@ -16,6 +18,15 @@ Top Level Psuedocode:
 ### BodyForces:
 
 ### Project:
+In the project step we are solving the pressure portion of the Navier-Stokes equation in order to assure our fluid reamins incompressible. Here is the equation that needs to be satisfied to assure incompressible flow:
+
+<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/Pressure2.png" >
+
+Below is the equation that is used in order to update the velocities in our grid after pressures have been computed:
+
+<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/Pressure1.png" >
+
+
 
 
 
