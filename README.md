@@ -5,7 +5,7 @@ A real-time fluid solver implemented in Processing for simulating realistic part
 
 ## Background
 
-In order to model fluid behavior in graphics, it is critical to build a solver that simultaneously allows for visually interesting behavior and ensures high stability and computation speed. Jos Stam developed a novel system for simulating fluids in this way, and his design serves as the basis for this project. Here is the navier stokes equation that is the basis for fluid solution systems: 
+In order to model fluid behavior in graphics, it is critical to build a solver that simultaneously allows for visually interesting behavior and ensures high stability and computation speed. Jos Stam developed a novel system for simulating fluids in this way, and his design serves as the basis for this project. Here is the Navier-Stokes equation that is the basis for fluid solution systems: 
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/NavierStokes.png" >
 
@@ -24,7 +24,7 @@ The key principle here is to assume that a "particle" of fluid exists at the cen
 ### BodyForces:
 
 ### Project:
-In the project step we are solving the pressure portion of the Navier-Stokes equation in order to assure our fluid reamins incompressible (constant volume). Here is the equation that needs to be satisfied to assure incompressible flow:
+In the project step we are solving the pressure portion of the Navier-Stokes equation in order to assure our fluid reamins incompressible (constant volume). Here is the equation that needs to be satisfied to ensure incompressible flow:
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/Pressure2.png" >
 
@@ -32,18 +32,12 @@ Below is the equation that is used in order to update the velocities in our grid
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/Pressure1.png" >
 
-
-
-
-
 ### BoundaryConditions:
 Our Boundary conditions are that we must assure that no fluid flows in our out of the outside box or the solid we created. In order to do this we create a thin layer of "boundary" cells just inside or outside of the boundary. We then need to make sure that the following equations are satisfied for the boundary cells. 
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/VelocityBoundary.png" >
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/PressureBoundary.png" >
-
-
 
 ## Implementation
 
