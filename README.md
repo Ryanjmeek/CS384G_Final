@@ -11,9 +11,15 @@ In order to model fluid behavior in graphics, it is critical to build a solver t
 
 Here is the top level psuedocode:
 
-<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/TopPsuedo.png" width="500" height="200">
+<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/TopPsuedo.png" width="500" height="180">
 
 ### Advect:
+
+The advection step consists of the transfer of fluid properties from position to position at every time step. By using a velocity field such that there is a unique velocity vector at every point in the fluid, properties can transfer throughout the fluid by using the backwards Euler advection strategy, as given by this equation:
+
+<img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/EulerAdvection.png" >
+
+The key principle here is to assume that a "particle" of fluid exists at the center of each cell in the system. We can calculate where that particle came from at each time step using the velocity field to effectively move properties throughout the fluid. Since the prior location of the particle may not have come from the center of a cell, bilinear interpolation of the 4 surrounding cells can be used to assign values to the next cell. 
 
 ### BodyForces:
 
