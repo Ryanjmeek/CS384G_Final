@@ -5,7 +5,7 @@ A real-time fluid solver implemented in Processing for simulating realistic part
 
 ## Background
 
-In order to model fluid behavior in graphics, it is critical to build a solver that simultaneously allows for visually interesting behavior and ensures high stability and computation speed. Jos Stam developed a novel system for simulating fluids in this way, and his design serves as the basis for this project. Here is the navier stokes equation that is the basis for fluid solution systems. 
+In order to model fluid behavior in graphics, it is critical to build a solver that simultaneously allows for visually interesting behavior and ensures high stability and computation speed. Jos Stam developed a novel system for simulating fluids in this way, and his design serves as the basis for this project. Here is the navier stokes equation that is the basis for fluid solution systems: 
 
 <img src="https://github.com/Ryanjmeek/CS384G_Final/blob/master/images/NavierStokes.png" >
 
@@ -47,13 +47,20 @@ Our Boundary conditions are that we must assure that no fluid flows in our out o
 
 ## Implementation
 
-The solution we created follows the method of:
+The solution we created consists of a simulation method that repeats at each timestep. It contains the following steps, in order:
 
 1. advect()
 2. bodyForces()
 3. project()
 
-We used a fixed time step of 1, a grid with cell size of 1 (where 1 cell corresponds to a pixel). Our grid is non-staggered. We use bilinear interpolation for our advection. We advect temperature, velocity, and density for each cell. We use body forces of Buoyancy, Gravity, and Vorticity. In order to solve the pressure equation, we use the Jacobi method with a constant number of iterations (8). Our boundary conditions include a thin line of cells along solids and the edge of the simulated area that we call boundary cells. We set the pressure of the boundary cells to be equal to the pressure just inside it. We set the velocity of the boundary cells to be the opposite of the velocity just inside it. 
+Using the equations and strategies given in the Background section of this document, we implemented our fluid solver with these details: 
+
+- A fixed time step of 1
+- A non-staggered grid with cell size of 1 (where 1 cell corresponds to a pixel) 
+- Advection of temperature, velocity, and density fluid properties for each cell using bilinear interpolation
+- Application of the body forces of Buoyancy, Gravity, and Vorticity 
+- The Jacobi method with a constant number of iterations (8) to solve the pressure equation 
+- Boundary conditions consisting of a thin line of cells along solids and the edge of the simulated area ("boundary cells") -- the pressures of the boundary cells are set to be equal to the pressure just inside it, and the velocities of the boundary cells are set to be the opposite of the velocity just inside it 
 
 ## Artifacts Produced
 
