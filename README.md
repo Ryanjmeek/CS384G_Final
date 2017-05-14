@@ -23,6 +23,10 @@ The key principle here is to assume that a "particle" of fluid exists at the cen
 
 ### BodyForces:
 
+In order to make our simulations look realistic, we add on three forces to each cell at each time step. The first of these forces is gravity, which is simply a constant downward force. The second force that we use is bouyancy. The bouyancy force pushes fluids up based on the density of the fluid in a cell and the temperature of the fluid in a cell.
+
+The final force used is a vorticity confinement force. This force is used to amplify circular velocity fields in the fluid, making the fluid look more dynamic. The methods that we use for advection does not perfectly model how fluids behave in real life. One side effect is that it tends to make vortices dissipate. The vorticity confinement force is added in to prevent that from happening as much.
+
 ### Project:
 In the project step we are solving the pressure portion of the Navier-Stokes equation in order to assure our fluid reamins incompressible (constant volume). Here is the equation that needs to be satisfied to ensure incompressible flow:
 
